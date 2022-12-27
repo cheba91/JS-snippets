@@ -1,0 +1,34 @@
+<style>
+   html {
+      scroll-behavior: smooth;
+   }
+   h2 a {
+      text-decoration: none !important;
+   }
+   .contents-table a {
+      color: rgba(51, 51, 51, 0.95) !important;
+      text-decoration: none !important;
+      font-weight: 400 !important;
+   }
+   .blog-anchor {
+      display: block;
+      position: relative;
+      top: -250px;
+      visibility: hidden;
+   }
+</style>
+<script>
+   // Add TOC
+   $.each($('.main-content h2'), function (index, value) {
+      $('.contents-table').append(
+         '<li><a href="#anchor-' + index + '">' + $(this).html() + '</a></li>'
+      );
+      $(
+         '<a class="blog-anchor" name="anchor-' +
+            index +
+            '">"anchor-' +
+            index +
+            '"</a>'
+      ).insertBefore(this);
+   });
+</script>
