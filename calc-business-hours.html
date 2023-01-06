@@ -1,0 +1,89 @@
+<script>
+   const cards = document.querySelectorAll('.shop-card');
+   const currentTime = new Date();
+   const currentDay = currentTime.getDay();
+   const currentHour = currentTime.getHours();
+   const currentMinute = currentTime.getMinutes();
+   const currentTimeFormatted = Number(`${currentHour}.${currentMinute}`);
+
+   const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+   cards.forEach((card) => {
+      // opening hours are eg. 9, 9:30...
+      // closing hours are eg. 17, 17:30...
+      // All times are in 12h format
+      const businessHours = card.querySelector('.business-hours');
+      const businessHoursVals = card.querySelector(
+         '.business-hours-vals-hidden'
+      );
+      const openingHoursWeek = businessHoursVals.querySelector(
+         '.opening-hours__weekdays'
+      ).textContent;
+      const closingHoursWeek = businessHoursVals.querySelector(
+         '.closing-hours__weekdays'
+      ).textContent;
+      const openingHourSaturday = businessHoursVals.querySelector(
+         '.opening-hours__saturday'
+      ).textContent;
+      const closingHourSaturday = businessHoursVals.querySelector(
+         '.closing-hours__saturday'
+      ).textContent;
+      let openingWeekNr = Number(openingHoursWeek.replaceAll(':', '.'));
+      let closingWeekNr = Number(closingHoursWeek.replaceAll(':', '.')) + 12;
+      let openingSatNr = openingHourSaturday
+         ? Number(openingHourSaturday.replaceAll(':', '.'))
+         : false;
+      let closingSatNr = closingHourSaturday
+         ? Number(closingHourSaturday.replaceAll(':', '.')) + 12
+         : false;
+      if (closingWeekNr === 24) closingWeekNr = 12;
+      if (closingSatNr === 24) closingSatNr = 12;
+      if (currentDay === 6) {
+         // it's a weekend
+         if (openingHourSaturday) {
+            if (currentTimeFormatted < openingSatNr) {
+               // it's before the opening time on a Saturday
+               businessHours.textContent = `Closed. Opens at ${openingHourSaturday} AM`;
+            } else if (currentTimeFormatted > closingSatNr) {
+               // it's after the closing time on a Saturday
+               businessHours.textContent = `Closed • Opens ${openingHoursWeek} AM Mon`;
+            } else {
+               // it's during business hours on a Saturday
+               businessHours.textContent = `Open • ${openingHourSaturday} AM - ${closingHourSaturday} PM`;
+            }
+         } else {
+            businessHours.textContent = `Closed • Opens ${openingHoursWeek} AM Mon`;
+         }
+      } else if (currentDay === 0) {
+         businessHours.textContent = `Closed • Opens ${openingHoursWeek} AM Mon`;
+      } else {
+         // it's a weekday
+
+         if (openingHoursWeek) {
+            if (currentTimeFormatted < openingWeekNr) {
+               // it's before the opening time on a weekday
+               businessHours.textContent = `Closed. Opens at ${openingHoursWeek} AM`;
+            } else if (currentTimeFormatted > closingWeekNr) {
+               if (currentDay === 5 && openingHourSaturday) {
+                  // it's friday after the closing and there is a Saturday opening time
+                  businessHours.textContent = `Closed • Opens ${openingHourSaturday} AM Sat`;
+               } else {
+                  if (currentDay === 5) {
+                     // Friday after closing and no Saturday opening time
+                     businessHours.textContent = `Closed • Opens ${openingHoursWeek} AM Mon`;
+                  } else {
+                     // it's after the closing time on a weekday
+                     businessHours.textContent = `Closed • Opens ${openingHoursWeek} AM ${
+                        days[currentDay + 1]
+                     }`;
+                  }
+               }
+            } else {
+               // it's during business hours on a weekday
+               businessHours.textContent = `Open • ${openingHoursWeek} AM - ${closingHoursWeek} PM`;
+            }
+         } else {
+            businessHours.textContent = 'Closed';
+         }
+      }
+   });
+</script>
