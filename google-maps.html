@@ -1,0 +1,169 @@
+<script
+   async
+   src="https://maps.googleapis.com/maps/api/js?key=API_KEY&libraries=geometry,places,map,marker&callback=initializeMap"
+></script>
+<script>
+   function initializeMap() {
+      const center = { lat: 33.47242268241825, lng: -84.34357228920496 };
+      map = new google.maps.Map(document.querySelector('.g-map'), {
+         zoom: 10,
+         center: center,
+         gestureHandling: 'greedy',
+      });
+   }
+    function addMarker(shop, reviewsRating, phone, hours, logo, moreLink) {
+      const infoWindow = new google.maps.InfoWindow();
+      const markerHTML = document.createElement('div');
+      markerHTML.classList.add('marker');
+      markerHTML.textContent = reviewsRating;
+
+      const marker = new google.maps.Marker({
+         position: shop.location,
+         content: markerHTML,
+         map,
+      });
+      // Create an infoWindow, center...etc
+      ((marker, shop) => {
+         google.maps.event.addListener(marker, 'click', function (e) {
+            infoWindow.setContent(`
+               <div class="info-window">
+                  <div class="info-window__logo">
+                    ${logo}
+                  </div>
+                  <div class="info-window__title">
+                     ${shop.name}
+                  </div>
+                  <div class="info-window__row">
+                     ${reviewsRating}
+                  </div>
+                  <div class="info-window__row">
+                     ${shop.address}
+                  </div>
+                  <div class="info-window__row">
+                     ${hours}
+                  </div>
+                  <div class="info-window__row view-more-link-card">
+                     ${moreLink}
+                  </div>`);
+            map.setZoom(14);
+            map.setCenter(marker.getPosition());
+            infoWindow.open(map, marker);
+         });
+      })(marker, shop);
+      // Close markers when clicked outside
+      google.maps.event.addListener(map, 'click', function () {
+         infoWindow.close();
+      });
+   }
+   const mapData = {};
+   // Create all initial markers
+   window.addEventListener('load', function () {
+      document.querySelectorAll('.shops-left .shop-card').forEach((card, i) => {
+         // Get data from the card
+         const cardName = card.querySelector('.shop-card__title').innerText;
+         cardAddress = card.querySelector('.address-js').innerText;
+         const cardCoords = card.querySelector('.store-coordinates').innerText;
+         // Get HTML
+         const cardReviewsHTML = card.querySelector(
+            '.shop-card__reviews'
+         ).outerHTML;
+         const cardPhoneHTML = card.querySelector(
+            '.card-info__line.phone'
+         ).outerHTML;
+         const cardHoursHTML = card.querySelector(
+            '.card-info__line.hours .business-hours'
+         ).outerHTML;
+         const cardAddressHTML = card.querySelector(
+            '.card-info__line.location'
+         ).outerHTML;
+         const cardLocation = {
+            lat: parseFloat(cardCoords.split(',')[0]),
+            lng: parseFloat(cardCoords.split(',')[1]),
+         };
+         const shopLogoHTML = card.querySelector(
+            '.shop-card__top img'
+         ).outerHTML;
+         const shopLink = card.querySelector('.view-more-link').outerHTML;
+
+         // save data
+         const shopData = {
+            name: cardName,
+            address: cardAddress,
+            location: cardLocation,
+         };
+         mapData[i] = shopData;
+         // Create a marker on the map
+         addMarker(
+            shopData,
+            cardReviewsHTML,
+            cardPhoneHTML,
+            cardHoursHTML,
+            shopLogoHTML,
+            shopLink
+         );
+
+         //  card.addEventListener('click', (e) => {
+         //     console.log('Card clicked');
+         //     const coords = card.querySelector('.store-coordinates').textContent;
+         //     const lat = parseFloat(coords.split(',')[0]);
+         //     const lng = parseFloat(coords.split(',')[1]);
+         //     console.log(lat, lng);
+         //     if (!lat || !lng) return;
+         //     const center = { lat, lng };
+         //     map.setZoom(14);
+         //     map.panTo(center);
+         //  });
+      });
+   });
+     // Get URL parameters and show closest marker to provided zip code
+   const urlParams = new URLSearchParams(window.location.search);
+   const zipParam = urlParams.get('zip');
+
+   // Get closest marker to zip code
+   const zipCodeCoords = {
+      lat: 0,
+      lng: 0,
+   };
+   const getClosestMarker = (zipCodeCoords) => {
+      let closestMarker = markers[0];
+      let closestDistance =
+         google.maps.geometry.spherical.computeDistanceBetween(
+            new google.maps.LatLng(zipCodeCoords),
+            new google.maps.LatLng(closestMarker.location)
+         );
+      markers.forEach((marker) => {
+         const distance = google.maps.geometry.spherical.computeDistanceBetween(
+            new google.maps.LatLng(zipCodeCoords),
+            new google.maps.LatLng(marker.location)
+         );
+         if (distance < closestDistance) {
+            closestDistance = distance;
+            closestMarker = marker;
+         }
+      });
+      return closestMarker;
+   };
+
+   if (zipParam) {
+      const geocoder = new google.maps.Geocoder();
+      geocoder.geocode({ address: zipParam }, (results, status) => {
+         if (status === 'OK') {
+            zipCodeCoords.lat = results[0].geometry.location.lat();
+            zipCodeCoords.lng = results[0].geometry.location.lng();
+            console.log('Zip code coords: ', zipCodeCoords);
+            const closestMarker = getClosestMarker(zipCodeCoords);
+            console.log('Closest marker: ', closestMarker);
+            const center = {
+               lat: closestMarker.getPosition().lat(),
+               lng: closestMarker.getPosition().lng(),
+            };
+            map.setZoom(10);
+            map.panTo(center);
+         } else {
+            console.log(
+               'Geocode was not successful for the following reason: ' + status
+            );
+         }
+      });
+   }
+</script>
