@@ -1,0 +1,18 @@
+<script>
+  // Add styles when HS from loads
+window.addEventListener('message', (event) => {
+    if (event.data.type === 'hsFormCallback' && event.data.eventName === 'onFormReady') {
+      console.log('The form has loaded!');
+      const form = document.getElementById('hs-form-iframe-0');
+      const doc = form.contentDocument;
+      const styles = doc.createElement('style');
+      styles.textContent = `
+        <style>
+          
+        </style>
+        `;
+
+      doc.body.appendChild(styles);
+    }
+  });
+</script>
