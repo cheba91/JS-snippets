@@ -1,0 +1,53 @@
+<script>
+  let tableChildren = 0;
+  const table = document.querySelector('.data-table');
+  const areaCheckVals = document.querySelectorAll('.js-check--area');
+  const bedroomsCheckVals = document.querySelectorAll('.js-check--bedrooms');
+  const launchDateCheckVals = document.querySelectorAll('.js-check--date');
+
+  const tableChanged = () => {
+    if (table.childElementCount > tableChildren) {
+      //Reset input numbers
+      document.querySelectorAll('span[class^="js-input--"]').forEach((input) => {
+        input.textContent = '0';
+      });
+      //----------------------------------
+      tableChildren = table.childElementCount;
+      table.querySelectorAll('.data-table__row').forEach((row) => {
+        // Area
+        const rowArea = row.querySelector('.js-get--area');
+        areaCheckVals.forEach((checkArea) => {
+          if (checkArea.textContent === rowArea.textContent) {
+            const areaDisplay = checkArea.parentElement.querySelector('.js-input--area');
+            areaDisplay.textContent = Number(areaDisplay.textContent) + 1;
+          }
+        });
+        // Bedrooms
+        const rowBedrooms = row.querySelector('.js-get--bedrooms');
+        bedroomsCheckVals.forEach((checkBedrooms) => {
+          if (checkBedrooms.textContent === rowBedrooms.textContent) {
+            const bedroomsDisplay = checkBedrooms.parentElement.querySelector('.js-input--bedrooms');
+            bedroomsDisplay.textContent = Number(bedroomsDisplay.textContent) + 1;
+          }
+        });
+        // Launch Date
+        const rowLaunchDate = row.querySelector('.js-get--launch');
+        launchDateCheckVals.forEach((checkLaunchDate) => {
+          if (checkLaunchDate.textContent === rowLaunchDate.textContent) {
+            const launchDateDisplay = checkLaunchDate.parentElement.querySelector('.js-input--date');
+            launchDateDisplay.textContent = Number(launchDateDisplay.textContent) + 1;
+          }
+        });
+      });
+    }
+    // Hide empty
+    document.querySelectorAll('span[class^="js-input--"]').forEach((input) => {
+      if (input.textContent === '0') input.closest('.w-dyn-item').style.display = 'none';
+      else input.closest('.w-dyn-item').style.display = 'block';
+    });
+  };
+
+  const observer = new MutationObserver(tableChanged);
+  const config = { attributes: true, childList: true, subtree: true };
+  setTimeout(() => observer.observe(table, config), 3000);
+</script>
