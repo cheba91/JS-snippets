@@ -1,0 +1,8 @@
+<script>
+    const iFrameEl = document.querySelector('iframe');
+    iFrameEl.addEventListener('load', (e) => {
+      const newStyle = document.createElement('style');
+      newStyle.textContent = '.my-class { display: none; }';
+      e.target.contentDocument.head.appendChild(newStyle);
+    });
+</script>
