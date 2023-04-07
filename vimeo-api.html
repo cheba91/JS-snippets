@@ -1,0 +1,33 @@
+<style>
+  #home-embed-video {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    max-width: 100%;
+    height: auto;
+  }
+
+  #home-embed-video iframe,
+  #home-embed-video object,
+  #home-embed-video embed {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+</style>
+<script src="https://player.vimeo.com/api/player.js"></script>
+<script>
+  var player = new Vimeo.Player('home-embed-video', {
+    id: 99999999,
+    autoplay: false,
+  });
+
+  const videoOverlay = document.querySelector('.video-wrap .video__overlay');
+  videoOverlay.addEventListener('click', function () {
+    player.play();
+    videoOverlay.classList.add('playing');
+  });
+</script>
