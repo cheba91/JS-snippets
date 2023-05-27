@@ -34,4 +34,33 @@
          disableOnInteraction: false,
       },
    });
+   
+   // With coverflow and pagination
+   const projectSlider = new Swiper('.swiper-2', {
+    centeredSlides: true,
+    slidesPerView: 'auto',
+    spaceBetween: 40,
+    loop: true,
+    // centerInsufficientSlides: true,
+    cssMode: false,
+    touchRatio: 0.4,
+    grabCursor: true,
+    speed: 600,
+    mouswheel: false,
+    keyboard: false,
+    slideToClickedSlide: true,
+    // initialSlide: 2,
+    effect: 'coverflow',
+
+    coverflowEffect: {
+      rotate: 0,
+      scale: 0.9,
+      modifier: 1,
+      slideShadows: false,
+    },
+    pagination: {
+      el: '.projects-swiper__pagination',
+      clickable: true,
+    },
+  });
 </script>
