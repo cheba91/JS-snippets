@@ -1,0 +1,44 @@
+<script>
+  const activeClass = 'active';
+  const toc = document.querySelector('#toc');
+  const content = document.querySelector('#content');
+  const collectHeadings = 'h2,h3';
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        const id = entry.target.getAttribute('id');
+        if (entry.isIntersecting) {
+          document.querySelectorAll(`.${activeClass}`).forEach((z) => z.classList.remove(activeClass));
+          document.querySelector(`a[href="#${id}"]`).classList.add(activeClass);
+        }
+      });
+    },
+    { rootMargin: '0px 0px -75% 0px' }
+  );
+
+  content.querySelectorAll(collectHeadings).forEach((heading, i) => {
+    observer.observe(heading);
+    let str = heading.innerHTML;
+    str = str.replace(/\s+/g, '-').replace(/[°&\/\\#,+()$~%.'":;*?<>{}]/g, '');
+    heading.setAttribute('id', str);
+    const item = document.createElement('a');
+    item.innerHTML = heading.innerHTML;
+    collectHeadings.split(',').forEach((tag) => {
+      if (heading.tagName.toLowerCase() == tag) item.classList.add('tocitem', `toc-${tag}`);
+    });
+    item.setAttribute('href', '#' + str);
+    item.addEventListener('click', (e) => {
+      e.preventDefault();
+      const target = document.querySelector(item.getAttribute('href'));
+      const offset = 150;
+      const scrollOptions = {
+        top: target.getBoundingClientRect().top + window.pageYOffset - offset,
+        behavior: 'smooth',
+      };
+      window.scrollTo(scrollOptions);
+    });
+
+    toc.appendChild(item);
+  });
+</script>
