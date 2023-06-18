@@ -1,0 +1,35 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.1/gsap.min.js" integrity="sha512-qF6akR/fsZAB4Co1QDDnUXWnaQseLGXoniuSuSlPQK6+aWhlMZcHzkasCSlnWoe+TJuudlka1/IQ01Dnhgq95g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script> 
+document.addEventListener('DOMContentLoaded', () => {
+    const words = document.querySelectorAll('.hero-text-rotate > .h1');
+    const main = gsap.timeline({ repeat: -1 });
+    const dura = 3;
+    words.forEach((word, i) => {
+      let delay = i * dura;
+      let wordTL = gsap.timeline();
+      wordTL.from(words[i], {
+        duration: 1,
+        yPercent: -100,
+        opacity: 0,
+        ease: 'power2.out',
+      });
+      if (i !== words.length - 1) {
+        wordTL.to(words[i], {
+          duration: 1,
+          yPercent: 100,
+          opacity: 0,
+          ease: 'power2.out',
+          delay: dura - 1,
+        });
+      }
+      wordTL.to(words[i], {
+        duration: 1,
+        delay: 1,
+        opacity: 1,
+        ease: 'power2.out',
+      });
+      main.add(wordTL, delay);
+      word.classList.remove('hidden');
+    });
+  });
+</script>
