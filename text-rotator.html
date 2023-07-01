@@ -1,0 +1,43 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.1/gsap.min.js" integrity="sha512-qF6akR/fsZAB4Co1QDDnUXWnaQseLGXoniuSuSlPQK6+aWhlMZcHzkasCSlnWoe+TJuudlka1/IQ01Dnhgq95g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script> 
+document.addEventListener('DOMContentLoaded', () => {
+  let animation = gsap.timeline({ repeat: -1 });
+  let targets = document.querySelectorAll('.h1.is--rotating');
+  let numberOfTargets = targets.length;
+
+  let duration = 0.5;
+  let pause = 2;
+
+  let stagger = duration + pause;
+  let repeatDelay = stagger * (numberOfTargets - 1) + pause;
+
+  gsap.set('.hero-text-rotate', { autoAlpha: 1 });
+  animation
+    .from(targets, {
+      y: -100,
+      duration: duration,
+      opacity: 0,
+      stagger: {
+        each: stagger,
+        repeat: -1,
+        repeatDelay: repeatDelay,
+      },
+    })
+    .to(
+      targets,
+      {
+        y: 100,
+        duration: duration,
+        opacity: 0,
+        stagger: {
+          each: stagger,
+          repeat: -1,
+          repeatDelay: repeatDelay,
+        },
+      },
+      stagger
+    );
+  // They are hidden by default
+  targets.forEach((target) => target.classList.remove('hidden'));
+});
+</script>
