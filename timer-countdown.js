@@ -1,10 +1,14 @@
+// const countdownDate = new Date('July 24, 2023 7:28 AM GMT-4').getTime();
+// const countdownDate = new Date('July 29, 2023 12:30 AM UTC-5').getTime();
+const countdownDate = new Date('July 29, 2023 12:30 AM EST').getTime();
+
+// Selectors
 const daysEl = document.querySelector('.countdown-timer-container #days');
 const hoursEl = document.querySelector('.countdown-timer-container #hours');
 const minutesEl = document.querySelector('.countdown-timer-container #minutes');
 const secondsEl = document.querySelector('.countdown-timer-container #seconds');
 
-const countdownDate = new Date('July 29, 2023 12:30 AM EST').getTime();
-
+// Countdown
 setInterval(() => {
   const now = new Date().getTime();
   const distance = countdownDate - now;
