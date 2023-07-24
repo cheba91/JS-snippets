@@ -1,8 +1,8 @@
 <script>
   const activeClass = 'active';
-  const toc = document.querySelector('#toc');
-  const content = document.querySelector('#content');
-  const collectHeadings = 'h2,h3';
+  const toc = document.querySelector('.toc');
+  const content = document.querySelector('.text-content');
+  const collectHeadings = 'h1,h2';
 
   const observer = new IntersectionObserver(
     (entries) => {
@@ -25,9 +25,11 @@
     const item = document.createElement('a');
     item.innerHTML = heading.innerHTML;
     collectHeadings.split(',').forEach((tag) => {
-      if (heading.tagName.toLowerCase() == tag) item.classList.add('tocitem', `toc-${tag}`);
+      if (heading.tagName.toLowerCase() == tag) item.classList.add('toc__item', `toc-${tag}`);
     });
-    item.setAttribute('href', '#' + str);
+    item.setAttribute('href', `#${str}`);
+    toc.appendChild(item);
+
     item.addEventListener('click', (e) => {
       e.preventDefault();
       const target = document.querySelector(item.getAttribute('href'));
@@ -38,7 +40,5 @@
       };
       window.scrollTo(scrollOptions);
     });
-
-    toc.appendChild(item);
   });
 </script>
