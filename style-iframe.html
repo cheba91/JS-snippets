@@ -1,8 +1,15 @@
+<style>
+  #demo-form iframe {
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+  }
+</style>
 <script>
-    const iFrameEl = document.querySelector('iframe');
-    iFrameEl.addEventListener('load', (e) => {
-      const newStyle = document.createElement('style');
-      newStyle.textContent = '.my-class { display: none; }';
-      e.target.contentDocument.head.appendChild(newStyle);
-    });
+  const iFrameEl = document.querySelector('#demo-form iframe');
+  iFrameEl.addEventListener('load', (e) => {
+    const newStyle = document.createElement('style');
+    newStyle.textContent = '.my-class { display: none; }';
+    e.target.contentDocument.head.appendChild(newStyle);
+    iFrameEl.style.opacity = 1;
+  });
 </script>
