@@ -33,3 +33,28 @@ async function scrapeFooter() {
 }
 
 scrapeFooter();
+
+//-----------
+const fs = require('fs');
+
+const css = fs.readFileSync('purged-styles.css', 'utf-8');
+const footerHTML = fs.readFileSync('footer.html', 'utf-8');
+
+const updatedFooterHTML = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Footer</title>
+<style>
+${css}
+</style>
+</head>
+<body>
+${footerHTML}
+</body>
+</html>
+`;
+
+fs.writeFileSync('updated-footer.html', updatedFooterHTML);
