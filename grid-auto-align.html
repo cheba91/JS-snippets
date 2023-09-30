@@ -1,0 +1,17 @@
+<script src="https://cdn.jsdelivr.net/npm/macy@2.5.0/dist/macy.min.js"></script>
+<script>
+var macyInstance = Macy({
+    container: '#macy-container', //Id of the grid
+    trueOrder: true, 
+    margin: 50, //Gap between
+    columns: 3, //Colums
+    debug: true,
+    mobileFirst: true,
+    breakAt: {
+        1200: 3,
+        940: 2,
+        520: 1,
+        400: 1
+    }
+});
+</script>
