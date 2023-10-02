@@ -15,3 +15,6 @@
          results.style.display = 'none';
       }
    });
+
+// WF close:
+$('.w-dropdown').trigger('w-close');
