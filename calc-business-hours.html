@@ -87,3 +87,40 @@
       }
    });
 </script>
+<script>
+   // Display if the shop is open or closed
+  document.addEventListener('DOMContentLoaded', () => {
+    let isOpen;
+    const openingTimes = [
+      ['09:30', '22:00'],
+      ['09:30', '22:00'],
+      ['09:30', '22:00'],
+      ['09:30', '22:00'],
+      ['09:30', '22:00'],
+      ['11:00', '22:00'],
+      ['11:00', '22:00'],
+    ];
+    const dateNow = new Date();
+    const options = {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+      timeZone: 'Europe/Ljubljana',
+    };
+    let dayNr = dateNow.getDay();
+    dayNr === 0 ? (dayNr = 7) : (dayNr -= 1);
+    const sloTime = dateNow.toLocaleString('en-EN', options);
+    const open = openingTimes[dayNr][0];
+    const close = openingTimes[dayNr][1];
+    sloTime > open && sloTime < close ? (isOpen = true) : (isOpen = false);
+
+    console.log(`Restaurant open: ${isOpen}, opening at ${open}, closing at ${close}, local time: ${sloTime}, day of week:${dayNr}`);
+
+    // Display if open or closed
+    const openText = document.querySelector('#set-date');
+    isOpen ? (openText.textContent = `Until ${close}`) : (openText.textContent = `Closed`);
+
+    // Dropdown text
+    document.querySelector('.best-food_info-text[data-day="today"]').textContent = `${open}-${close}`;
+  });
+</script>
