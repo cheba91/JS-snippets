@@ -1,4 +1,3 @@
-window.pageIsLoaded = false;
 const createGTMscript = () => {
   if (window.scriptCreated) return;
   var w = window,
@@ -18,9 +17,11 @@ const createGTMscript = () => {
   window.scriptCreated = true;
 };
 
-window.addEventListener('load', () => (window.pageIsLoaded = true));
-['mousemove', 'touchstart'].forEach((e) => {
-  window.addEventListener(e, () => {
-    if (window.pageIsLoaded) createGTMscript();
+window.addEventListener('load', () => {
+  ['mousemove', 'touchstart'].forEach((e) => {
+    window.addEventListener(e, () => {
+      createGTMscript();
+    });
   });
+  // Other scripts
 });
