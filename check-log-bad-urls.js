@@ -6,7 +6,7 @@ const parser = new xml2js.Parser();
 const API_KEY = ''; //https://developers.google.com/speed/docs/insights/v5/get-started;
 const BASE_URL = '';
 const SITEMAP_URL = `${BASE_URL}/sitemap.xml`;
-const TRESHOLD = 60;
+const THRESHOLD = 60;
 
 const fetch = (url, expectedContentType = 'application/json') => {
   return new Promise((resolve, reject) => {
@@ -63,7 +63,7 @@ const getPageSpeedScore = async (url) => {
       const score = await getPageSpeedScore(url);
       const resultString = `${url.trim()}  score:${Math.round(score)}`;
       allScores.push(score);
-      if (score < TRESHOLD) lowScores.push(resultString);
+      if (score < THRESHOLD) lowScores.push(resultString);
       console.log(resultString);
     } catch (err) {
       console.error(`Error processing sitemap or URL:`, err.message);
@@ -80,7 +80,7 @@ Average score for all URLs: ${Math.round(allScores.reduce((a, b) => a + b, 0) / 
 ${errorUrls.length} URLs returned error:
 ${errorUrls.join('\n')}
 
-${allScores.filter((score) => score < TRESHOLD).length} URLs with score below ${TRESHOLD}:
+${allScores.filter((score) => score < THRESHOLD).length} URLs with score below ${THRESHOLD}:
 ${lowScores.join('\n')}`;
 
       fs.appendFileSync('results.txt', finalString, 'utf8');
