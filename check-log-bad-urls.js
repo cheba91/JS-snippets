@@ -90,5 +90,5 @@ ${lowScores.join('\n')}`;
 /*
 npm init -y
 npm install axios xml2js
-node checker.js
+node <filename>.js
 */
