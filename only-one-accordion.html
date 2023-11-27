@@ -1,0 +1,59 @@
+<script>
+  // Accordion Settings
+  const accSettings = {
+    speed: 300, // Animation speed
+    oneOpen: true, // Close all other accordion items if true
+    classes: {
+      accordion: 'js-accordion',
+      header: 'js-accordion-header',
+      item: 'js-accordion-item',
+      body: 'js-accordion-body',
+      icon: 'js-accordion-icon',
+      active: 'active',
+    },
+  };
+
+  const prefix = accSettings.classes;
+
+  const accordion = (() => {
+    const accordionElem = $(`.${prefix.accordion}`);
+    const accordionHeader = accordionElem.find(`.${prefix.header}`);
+    const accordionItem = $(`.${prefix.item}`);
+    const accordionBody = $(`.${prefix.body}`);
+    const accordionIcon = $(`.${prefix.icon}`);
+    const activeClass = prefix.active;
+
+    return {
+      init: function (settings) {
+        accordionHeader.on('click', function () {
+          accordion.toggle($(this));
+          if (accSettings.offsetAnchor) {
+            setTimeout(() => {
+              $('html').animate({ scrollTop: $(this).offset().top - accSettings.offsetFromTop }, accSettings.speed);
+            }, accSettings.scrollTopDelay);
+          }
+        });
+        $.extend(accSettings, settings);
+        if (settings.oneOpen && $(`.${prefix.item}.${activeClass}`).length > 1) {
+          $(`.${prefix.item}.${activeClass}:not(:first)`)
+            .removeClass(activeClass)
+            .find(`.${prefix.header} > .${prefix.icon}`)
+            .removeClass(activeClass);
+        }
+        $(`.${prefix.item}.${activeClass}`).find(`> .${prefix.body}`).show();
+      },
+
+      toggle: function ($this) {
+        if (accSettings.oneOpen && $this[0] != $this.closest(accordionElem).find(`> .${prefix.item}.${activeClass} > .${prefix.header}`)[0]) {
+          $this.closest(accordionElem).find(`> .${prefix.item}`).removeClass(activeClass).find(accordionBody).slideUp(accSettings.speed);
+          $this.closest(accordionElem).find(`> .${prefix.item}`).find(`> .${prefix.header} > .${prefix.icon}`).removeClass(activeClass);
+        }
+
+        $this.closest(accordionItem).toggleClass(`${activeClass}`).find(`> .${prefix.header} > .${prefix.icon}`).toggleClass(activeClass);
+        $this.next().stop().slideToggle(accSettings.speed);
+      },
+    };
+  })();
+
+  $(document).ready(() => accordion.init(accSettings));
+</script>
