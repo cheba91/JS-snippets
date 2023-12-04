@@ -55,8 +55,15 @@ const getPageSpeedScore = async (url) => {
   const allScores = [];
   const lowScores = [];
 
-  // Ensure the output files are empty or create them if they don't exist
-  fs.writeFileSync('results.txt', '', 'utf8');
+  //------------------------
+  const currentDate = new Date();
+  const options = { day: '2-digit', month: 'short', year: 'numeric' };
+  const formattedParts = new Intl.DateTimeFormat('en-US', options).formatToParts(currentDate);
+  const month = formattedParts.find((part) => part.type === 'month').value.toLowerCase();
+  const day = formattedParts.find((part) => part.type === 'day').value;
+  const year = formattedParts.find((part) => part.type === 'year').value;
+  const filename = `results-${month}-${day}-${year}.txt`;
+  fs.writeFileSync(filename, '', 'utf8');
 
   for (let url of urls) {
     try {
@@ -83,12 +90,12 @@ ${errorUrls.join('\n')}
 ${allScores.filter((score) => score < THRESHOLD).length} URLs with score below ${THRESHOLD}:
 ${lowScores.join('\n')}`;
 
-      fs.appendFileSync('results.txt', finalString, 'utf8');
+      fs.appendFileSync(filename, finalString, 'utf8');
     }
   }
 })();
 /*
 npm init -y
 npm install axios xml2js
-node <filename>.js
+node checker.js
 */
