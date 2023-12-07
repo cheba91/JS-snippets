@@ -57,3 +57,18 @@
 
   $(document).ready(() => accordion.init(accSettings));
 </script>
+
+<script>
+  // Second example
+$('[data-click="faq"]').click(function(){
+  if(!$(this).is('.open')){
+    $('[data-click="faq"].open').each((i, item)=>{
+      item.click();
+    });
+    $(this).addClass('open');    
+  }
+  else{
+    $(this).removeClass('open');
+  }
+});
+</script>
