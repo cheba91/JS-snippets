@@ -1,5 +1,8 @@
+const scriptsToLoad = [];
+// Load on interect
 const loadScriptsOnInteract = () => {
   if (window.scriptsCreated) return;
+  // load GTM
   var w = window,
     d = document,
     s = 'script',
@@ -13,9 +16,18 @@ const loadScriptsOnInteract = () => {
   j.async = true;
   j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
   f.parentNode.insertBefore(j, f);
-  console.log('GTM script created');
+
+  // Load other scripts
+  scriptsToLoad.forEach((src) => {
+    const script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src = src;
+    script.async = false;
+    document.body.appendChild(script);
+  });
+
   window.scriptsCreated = true;
-  // Other scripts that need to be loaded on interact
+  console.log('interaction scripts created');
 };
 
 window.addEventListener('load', () => {
