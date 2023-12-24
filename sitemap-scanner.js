@@ -62,7 +62,7 @@ const getPageSpeedScore = async (url) => {
   const month = formattedParts.find((part) => part.type === 'month').value.toLowerCase();
   const day = formattedParts.find((part) => part.type === 'day').value;
   const year = formattedParts.find((part) => part.type === 'year').value;
-  const filename = `results-${month}-${day}-${year}.txt`;
+  const filename = `results-${month}-${day}-${year}__${Math.floor(Math.random() * 999) + 1}.txt`;
   fs.writeFileSync(filename, '', 'utf8');
 
   for (let url of urls) {
