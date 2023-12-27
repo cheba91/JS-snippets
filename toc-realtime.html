@@ -1,8 +1,8 @@
 <script>
   const activeClass = 'active';
-  const toc = document.querySelector('.toc');
-  const content = document.querySelector('.text-content');
-  const collectHeadings = 'h1,h2';
+  const toc = document.querySelector('.blog__toc-list');
+  const content = document.querySelector('.blog__richtext');
+  const collectHeadings = 'h1,h2,h3';
 
   const observer = new IntersectionObserver(
     (entries) => {
@@ -14,18 +14,19 @@
         }
       });
     },
-    { rootMargin: '0px 0px -75% 0px' }
+    { rootMargin: '-155px 0px -75% 0px' }
   );
 
   content.querySelectorAll(collectHeadings).forEach((heading, i) => {
     observer.observe(heading);
     let str = heading.innerHTML;
-    str = str.replace(/\s+/g, '-').replace(/[°&\/\\#,+()$~%.'":;*?<>{}]/g, '');
+    str = str.replace(/[°&\/\\#,+()$~%.'":;*?<>{}0-9]/g, '').replace(/\s+/g, '-');
     heading.setAttribute('id', str);
     const item = document.createElement('a');
     item.innerHTML = heading.innerHTML;
     collectHeadings.split(',').forEach((tag) => {
       if (heading.tagName.toLowerCase() == tag) item.classList.add('toc__item', `toc-${tag}`);
+      if (heading.tagName.toLowerCase() == 'h3') item.classList.add('is--indented');
     });
     item.setAttribute('href', `#${str}`);
     toc.appendChild(item);
@@ -33,7 +34,7 @@
     item.addEventListener('click', (e) => {
       e.preventDefault();
       const target = document.querySelector(item.getAttribute('href'));
-      const offset = 150;
+      const offset = 155;
       const scrollOptions = {
         top: target.getBoundingClientRect().top + window.pageYOffset - offset,
         behavior: 'smooth',
