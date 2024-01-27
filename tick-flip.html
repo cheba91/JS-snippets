@@ -1,0 +1,108 @@
+<link href="https://unpkg.com/@pqina/flip/dist/flip.min.css" rel="stylesheet" />
+<script src="https://unpkg.com/@pqina/flip/dist/flip.min.js"></script>
+<!-- ------------------------------------------------------------------------- -->
+<!-- Count up to a spectified number -->
+<!-- ------------------------------------------------------------------------- -->
+<div class="tick" data-value="10000000" data-did-init="setupFlip">
+  <div class="tick__dollar">$</div>
+  <div class="tick__inner" data-repeat="true" aria-hidden="true">
+    <span data-view="flip"></span>
+  </div>
+</div>
+<script>
+  let isInView = false;
+  const targetValue = 80000000;
+  const valueInterval = 1111111;
+  const timeInterval = 40;
+
+  const randomTickVal = () => Math.floor(Math.random() * 1682) + 88;
+
+  const runAfter = () => {
+    let currValue = targetValue;
+    const tick = document.querySelector('.tick');
+    setInterval(() => {
+      const random = randomTickVal();
+      currValue += random;
+      tick.setAttribute('data-value', currValue);
+    }, 2000);
+  };
+  // Set up the Intersection Observer
+  const targetElement = document.querySelector('.tick-wrapper');
+  const options = {
+    root: null,
+    rootMargin: '0px',
+    threshold: 0.05,
+  };
+  const callback = (entries, observer) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        isInView = true;
+        console.log('in view');
+        observer.unobserve(targetElement);
+      }
+    });
+  };
+  const observer = new IntersectionObserver(callback, options);
+  observer.observe(targetElement);
+
+  // Set up the Flip Counter
+  function setupFlip(tick) {
+    var initialValue = parseInt(tick.root.getAttribute('data-value'), 10);
+    tick.value = initialValue;
+    const tickInterval = Tick.helper.interval(() => {
+      let tickValue;
+      if (tick.value >= targetValue) {
+        tickValue = targetValue;
+        tickInterval.stop();
+        runAfter();
+      } else tickValue = tick.value + valueInterval;
+      tick.value = Number(tickValue);
+      console.log(tickValue);
+
+      tick.root.setAttribute('aria-label', tickValue);
+    }, timeInterval);
+  }
+</script>
+
+<!-- ------------------------------------------------------------------------- -->
+<!-- Countdown to a specified date -->
+<!-- ------------------------------------------------------------------------- -->
+<div class="tick" data-did-init="handleTickInit">
+  <div class="tick__inner" data-repeat="true" data-layout="horizontal__fit" data-transform="preset(d, h, m, s) -> delay">
+    <div class="tick-group">
+      <div class="tick__inner-group" data-key="value" data-repeat="true" data-transform="pad(00) -> split -> delay">
+        <span data-view="flip"></span>
+      </div>
+
+      <span data-key="label" data-view="text" class="tick-label"></span>
+    </div>
+  </div>
+</div>
+<script>
+  // init Flip Counter
+  function handleTickInit(tick) {
+    const isMobile = window.innerWidth < 768;
+    var locale = {
+      MINUTE_PLURAL: isMobile ? 'MIN' : 'MINUTES',
+      MINUTE_SINGULAR: isMobile ? 'MIN' : 'MINUTE',
+      SECOND_PLURAL: isMobile ? 'SEC' : 'SECONDS',
+      SECOND_SINGULAR: isMobile ? 'SEC' : 'SECOND',
+    };
+    for (var key in locale) {
+      if (!locale.hasOwnProperty(key)) {
+        continue;
+      }
+      tick.setConstant(key, locale[key]);
+    }
+    var counter = Tick.count.down('2024-01-20T12:00:00+0000');
+    counter.onupdate = function (value) {
+      tick.value = value;
+    };
+    counter.onended = function () {
+      //   document.querySelector('.counter-embed.is--countdown').style.display = 'none';
+      document.querySelector('.tick-onended-message').style.display = 'block';
+      console.log('ended, redirecting');
+      setTimeout(() => window.location.reload(), 7000);
+    };
+  }
+</script>
