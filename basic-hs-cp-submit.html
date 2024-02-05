@@ -1,7 +1,8 @@
 /* Basic HubSpot submit with Chili Piper */
 <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
 <script src="https://js.chilipiper.com/marketing.js" type="text/javascript"></script>
-<div id="hubspot-form-embed" class="hf-form-emb"></div>
+
+<div class="hs-form-emb"></div>
 
 <script>
   const formId = '';
@@ -9,6 +10,7 @@
     region: 'na1',
     portalId: '3966505',
     formId: formId,
+    target: '.hs-form-emb',
   });
 
   let lead = {};
