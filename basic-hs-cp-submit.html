@@ -1,0 +1,38 @@
+/* Basic HubSpot submit with Chili Piper */
+<script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+<script src="https://js.chilipiper.com/marketing.js" type="text/javascript"></script>
+<div id="hubspot-form-embed" class="hf-form-emb"></div>
+
+<script>
+  const formId = '';
+  hbspt.forms.create({
+    region: 'na1',
+    portalId: '3966505',
+    formId: formId,
+  });
+
+  let lead = {};
+  window.addEventListener('message', function (event) {
+    if (event.data.type === 'hsFormCallback' && event.data.eventName === 'onFormSubmit' && event.data.id === formId) {
+      for (let key in event.data.data) {
+        if (Array.isArray(event.data.data[key].value)) event.data.data[key].value = event.data.data[key].value.toString();
+        lead[event.data.data[key].name] = event.data.data[key].value;
+      }
+      if (Object.keys(lead).length <= 1) {
+        lead = event.data.data;
+      }
+    }
+  });
+  const userLang = navigator.language || navigator.userLanguage;
+  const CPlocale = userLang !== 'en-US' ? 'en_GB' : 'en_US';
+  window.addEventListener('message', function (event) {
+    if (event.data.type === 'hsFormCallback' && event.data.eventName === 'onFormSubmitted' && event.data.id === formId) {
+      console.log('lead: ', lead);
+      ChiliPiper.submit('', 'inbound-router', {
+        map: true,
+        lead: lead,
+        locale: CPlocale,
+      });
+    }
+  });
+</script>
