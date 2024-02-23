@@ -22,7 +22,7 @@
     // Show popup
     const showPopup = (e, isMobile) => {
       if (e?.clientY <= 10 || isMobile) {
-        e && document.removeEventListener('mouseleave', showPopup);
+        e && body.removeEventListener('mouseleave', showPopup);
         popup.classList.add('display');
         body.classList.add('prevent-scroll');
         setTimeout(() => popup.classList.add('fade'), 50);
@@ -39,7 +39,7 @@
     };
 
     // Triggers
-    if (window.innerWidth > 991) document.addEventListener('mouseleave', showPopup); // Show on mouse leave on desktop
+    if (window.innerWidth > 991) body.addEventListener('mouseleave', showPopup); // Show on mouse leave on desktop
     else setTimeout(() => showPopup(false, true), 15 * 1000); // Show after 15 seconds on mobile
 
     // Close on overlay & close button click
