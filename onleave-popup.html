@@ -20,12 +20,12 @@
     const body = document.querySelector('body');
 
     // Show popup
-    const showPopup = (e) => {
-      if (e.clientY <= 10) {
-        document.removeEventListener('mouseleave', showPopup);
+    const showPopup = (e, isMobile) => {
+      if (e?.clientY <= 10 || isMobile) {
+        e && document.removeEventListener('mouseleave', showPopup);
         popup.classList.add('display');
         body.classList.add('prevent-scroll');
-        setTimeout(() => popup.classList.add('fade'), 10);
+        setTimeout(() => popup.classList.add('fade'), 50);
       }
     };
 
@@ -38,8 +38,9 @@
       }, 300);
     };
 
-    // On leave
-    document.addEventListener('mouseleave', showPopup);
+    // Triggers
+    if (window.innerWidth > 991) document.addEventListener('mouseleave', showPopup); // Show on mouse leave on desktop
+    else setTimeout(() => showPopup(false, true), 15 * 1000); // Show after 15 seconds on mobile
 
     // Close on overlay & close button click
     ['.onleave-popup__overlay', '.onleave-popup__close'].forEach((selector) =>
