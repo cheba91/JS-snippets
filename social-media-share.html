@@ -1,0 +1,35 @@
+<script defer src="https://cdn.jsdelivr.net/npm/@finsweet/attributes-copyclip@1/copyclip.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const icons = document.querySelectorAll('.blog-share');
+    const currentUrl = window.location.href;
+    const copyContentEl = document.querySelector('.blog-content__social-shares .copy-content');
+    icons &&
+      icons.forEach((icon) => {
+        // LinkedIn
+        if (icon.classList.contains('li-icon')) {
+          icon.href = `https://www.linkedin.com/sharing/share-offsite/?url=${currentUrl}`;
+        }
+        // Twitter
+        if (icon.classList.contains('tw-icon')) {
+          icon.href = `https://twitter.com/intent/tweet?text=<EXCERPT>`;
+        }
+        // Facebook
+        if (icon.classList.contains('fb-icon')) {
+          icon.href = `https://www.facebook.com/sharer/sharer.php?u=${currentUrl}`;
+        }
+        // Pinterest
+        if (icon.classList.contains('pt-icon')) {
+          icon.href = `https://pinterest.com/pin/create/button/?url=${currentUrl}`;
+        }
+        // Mail
+        if (icon.classList.contains('mail-icon')) {
+          icon.href = `mailto:?subject=<TEXT>\n${currentUrl}`;
+        }
+        // Copy Link
+        if (icon.classList.contains('copy-icon')) {
+          copyContentEl.textContent = currentUrl;
+        }
+      });
+  });
+</script>
