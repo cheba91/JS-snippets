@@ -15,36 +15,48 @@
   }
 </style>
 <script>
+  window.dataLayer = window.dataLayer || [];
   window.addEventListener('load', () => {
-    const popup = document.querySelector('.onleave-popup');
-    const body = document.querySelector('body');
+    const wasAlreadyDisplayed = sessionStorage.getItem('popup-displayed');
+    if (!wasAlreadyDisplayed) {
+      const popup = document.querySelector('.onleave-popup');
+      const body = document.querySelector('body');
+      // Track button click & save to localStorage for later
+      document.querySelector('#popup-button')?.addEventListener('click', () => {
+        dataLayer.push({ event: 'popup_button_clicked' });
+        localStorage.setItem('popup_button_clicked', true);
+      });
 
-    // Show popup
-    const showPopup = (e, isMobile) => {
-      if (e?.clientY <= 10 || isMobile) {
-        e && body.removeEventListener('mouseleave', showPopup);
-        popup.classList.add('display');
-        body.classList.add('prevent-scroll');
-        setTimeout(() => popup.classList.add('fade'), 50);
-      }
-    };
+      // Show popup
+      const showPopup = (e, isMobile) => {
+        if (e?.clientY <= 10 || isMobile) {
+          e && body.removeEventListener('mouseleave', showPopup);
+          popup.classList.add('display');
+          body.classList.add('prevent-scroll');
+          setTimeout(() => popup.classList.add('fade'), 50);
+          sessionStorage.setItem('popup-displayed', true);
+          // Track popup show
+          dataLayer.push({ event: 'popup_displayed' });
+        }
+      };
 
-    // Close popup
-    const closePopup = () => {
-      popup.classList.remove('fade');
-      setTimeout(() => {
-        body.classList.remove('prevent-scroll');
-        popup.classList.remove('display');
-      }, 300);
-    };
+      // Close popup
+      const closePopup = () => {
+        popup.classList.remove('fade');
+        setTimeout(() => {
+          body.classList.remove('prevent-scroll');
+          popup.classList.remove('display');
+        }, 300);
+      };
 
-    // Triggers
-    if (window.innerWidth > 991) body.addEventListener('mouseleave', showPopup); // Show on mouse leave on desktop
-    else setTimeout(() => showPopup(false, true), 15 * 1000); // Show after 15 seconds on mobile
+      // Triggers
+      if (window.innerWidth > 991) body.addEventListener('mouseleave', showPopup); // Show on mouse leave on desktop
+      else setTimeout(() => showPopup(false, true), 60 * 1000); // Show after n seconds on mobile
 
-    // Close on overlay & close button click
-    ['.onleave-popup__overlay', '.onleave-popup__close'].forEach((selector) =>
-      document.querySelector(selector).addEventListener('click', closePopup)
-    );
+      // Close on overlay & close button click
+      ['.onleave-popup__overlay', '.onleave-popup__close'].forEach((selector) =>
+        document.querySelector(selector).addEventListener('click', closePopup)
+      );
+    }
   });
 </script>
