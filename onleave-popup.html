@@ -23,8 +23,9 @@
       const body = document.querySelector('body');
       // Track button click & save to localStorage for later
       document.querySelector('#popup-button')?.addEventListener('click', () => {
-        dataLayer.push({ event: 'popup_button_clicked' });
         localStorage.setItem('popup_button_clicked', true);
+        // Track popup CTA button clicks
+        dataLayer.push({ event: 'popup_button_clicked' });
       });
 
       // Show popup
