@@ -1,0 +1,25 @@
+<script async src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js"></script>
+<style>
+  @media (min-width: 991px) {
+    .grid__card {
+      margin-bottom: 40px;
+      width: calc(50% - 20px);
+    }
+  }
+</style>
+<script>
+  window.addEventListener('load', () => {
+    const options = {
+      itemSelector: '.grid__card',
+      horizontalOrder: true,
+      gutter: 40, // horizontal space between cards
+    };
+    let msnry;
+    if (window.innerWidth > 991) msnry = new Masonry('.grid', options);
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth < 991) msnry.destroy();
+      else msnry = new Masonry('.grid', options);
+    });
+  });
+</script>
