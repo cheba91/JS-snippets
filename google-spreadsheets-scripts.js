@@ -1,0 +1,295 @@
+/*
+//----------- Fix Invalid HTML -----------//
+*/
+function fixInvalidHTML() {
+  // Get the active spreadsheet and sheet
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+
+  // Get the values from the column (e.g., column N)
+  var range = sheet.getRange('N:N'); // Adjust as needed
+  var values = range.getValues();
+
+  // Process each cell to fix the HTML
+  for (var i = 0; i < values.length; i++) {
+    var cellValue = values[i][0];
+    if (typeof cellValue === 'string') {
+      // Replace "" with " only inside attribute values
+      var fixedHTML = cellValue.replace(/(\w+)=""([^"]*)""/g, '$1="$2"');
+      values[i][0] = fixedHTML;
+    }
+  }
+
+  // Set the modified values back to the column
+  range.setValues(values);
+}
+
+/*
+//----------- Replace asset links -----------//
+*/
+function replaceAssetLinks() {
+  // Get the active spreadsheet and sheet
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+
+  // Get the values from the column (e.g., column N)
+  var range = sheet.getRange('N:N'); // Adjust as needed
+  var values = range.getValues();
+
+  // Process each cell to replace "/assets/ with "mydomain.com/assets/
+  for (var i = 0; i < values.length; i++) {
+    var cellValue = values[i][0];
+    if (typeof cellValue === 'string') {
+      // Replace "/assets/ with "mydomain.com/assets/
+      var replacedValue = cellValue.replace(/"\/assets\//g, '"mydomain.com/assets/');
+      values[i][0] = replacedValue;
+    }
+  }
+
+  // Set the modified values back to the column
+  range.setValues(values);
+}
+
+/*
+//----------- Keep only the first value -----------//
+*/
+function keepFirstValue() {
+  // Get the active spreadsheet and sheet
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+
+  // Get the values from the column (e.g., column A)
+  var range = sheet.getRange('A1:A'); // Adjust as needed
+  var values = range.getValues();
+
+  // Process each cell to keep only the first semicolon-separated value
+  for (var i = 0; i < values.length; i++) {
+    var cellValue = values[i][0];
+    if (typeof cellValue === 'string' && cellValue.includes(';')) {
+      values[i][0] = cellValue.split(';')[0];
+    }
+  }
+
+  // Set the modified values back to the column
+  range.setValues(values);
+}
+
+/*
+//----------- Search and replace -----------//
+*/
+function searchAndReplace() {
+  // Get the active spreadsheet and the sheet
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+
+  // Specify the range of the column you want to modify (e.g., column A)
+  var range = sheet.getRange('A1:A'); // Adjust as needed
+  var values = range.getValues();
+
+  // Loop through each cell in the column
+  for (var i = 0; i < values.length; i++) {
+    if (typeof values[i][0] === 'string') {
+      // Replace commas with semicolons for string values
+      values[i][0] = values[i][0].replace(/,/g, ';');
+    }
+  }
+
+  // Set the modified values back to the column
+  range.setValues(values);
+}
+
+/*
+//----------- Match two columns in different sheets and add a new column with matched values -----------//
+*/
+function matchAndAddColumn() {
+  // Open the active spreadsheet
+  var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+
+  // Get the sheets by name
+  var sheet1 = spreadsheet.getSheetByName('new');
+  var sheet2 = spreadsheet.getSheetByName('raw');
+
+  // Get the data from the relevant columns
+  var data1 = sheet1.getRange('A:A').getValues();
+  var data2 = sheet2.getRange('B:B').getValues();
+  var data3 = sheet2.getRange('A:A').getValues();
+
+  // Create an array to store the matched results
+  var results = [];
+
+  // Iterate through data1 and match with data2
+  for (var i = 0; i < data1.length; i++) {
+    var value1 = data1[i][0];
+    if (value1) {
+      // Check if value is not empty
+      var matchFound = false;
+      var matchedValue = ''; // Variable to store the matched value from data3
+      for (var j = 0; j < data2.length; j++) {
+        var value2 = data2[j][0];
+        if (value1 == value2) {
+          matchFound = true;
+          matchedValue = data3[j][0]; // Store the corresponding value from data3
+          break; // Exit inner loop once a match is found
+        }
+      }
+      if (matchFound) {
+        results.push([matchedValue]); // Add the matched value from data3 to results
+      } else {
+        results.push(['']); // No match found, add an empty value
+      }
+    } else {
+      results.push(['']); // Empty value in data1, add an empty value
+    }
+  }
+
+  // Determine the column index for the new column in Sheet1
+  var lastColumn = sheet1.getLastColumn();
+  var newColumnIndex = lastColumn + 1;
+
+  // Write the results to the new column in Sheet1
+  if (results.length > 0) {
+    sheet1.getRange(1, newColumnIndex, results.length, 1).setValues(results);
+  } else {
+    sheet1.getRange(1, newColumnIndex).setValue('No matches found');
+  }
+
+  // Set the header for the new column
+  sheet1.getRange(1, newColumnIndex).setValue('Matched Values');
+}
+
+/*
+//----------- Change URL to slug and add it to a new column -----------//
+*/
+function urlToSlug() {
+  // Get the active spreadsheet and the sheets
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+
+  // Get the values from the column (e.g., column A)
+  var range = sheet.getRange('AF1:AF'); // Adjust as needed
+  var values = range.getValues();
+
+  var results = [];
+
+  // Process each cell to replace the URL with the slug
+  for (var i = 0; i < values.length; i++) {
+    var cellValue = values[i][0];
+    Logger.log(cellValue);
+    if (typeof cellValue === 'string') {
+      // Convert the URL to a slug
+      var slug = cellValue
+        .split('/')
+        .filter(function (part) {
+          return part !== '';
+        })
+        .pop();
+      if (slug) {
+        results.push([slug]);
+      } else {
+        results.push(['']);
+      }
+    }
+  }
+
+  var lastColumn = sheet.getLastColumn();
+  var newColumnIndex = lastColumn + 1;
+
+  // Write the new column with the slugs
+  var newRange = sheet.getRange(1, newColumnIndex, results.length, 1);
+  newRange.setValues(results);
+
+  sheet.getRange(1, newColumnIndex).setValue('Original slug');
+}
+
+/*
+//----------- Comare fields from two columns in a collection and add a new column with matched values, either true or false -----------//
+*/
+function compareCols() {
+  // Get the active spreadsheet and sheet
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+
+  var data1 = sheet.getRange('B1:B').getValues();
+  var data2 = sheet.getRange('AG1:AG').getValues();
+
+  var results = [];
+
+  for (var i = 0; i < data1.length; i++) {
+    var value1 = data1[i][0];
+    if (value1) {
+      var matchFound = false;
+      for (var j = 0; j < data2.length; j++) {
+        var value2 = data2[j][0];
+        if (value1 == value2) {
+          matchFound = true;
+          break;
+        }
+      }
+      if (matchFound) {
+        results.push(['TRUE']);
+      } else {
+        results.push(['FALSE']);
+      }
+    } else {
+      results.push(['']);
+    }
+  }
+  var lastColumn = sheet.getLastColumn();
+  var newColumnIndex = lastColumn + 1;
+
+  if (results.length > 0) {
+    sheet.getRange(1, newColumnIndex, results.length, 1).setValues(results);
+  } else {
+    sheet.getRange(1, newColumnIndex).setValue('No matches found');
+  }
+
+  sheet.getRange(1, newColumnIndex).setValue('Matched slugs');
+}
+
+/*
+//----------- Calculate read time and add it to a new column -----------//
+*/
+function calculateReadTime() {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+
+  // Get the data from column B
+  var data = sheet.getRange('B:B').getValues();
+
+  // Create an array to store the read times
+  var readTimes = [];
+
+  // Iterate through data to strip HTML tags and calculate read time
+  for (var i = 0; i < data.length; i++) {
+    var htmlContent = data[i][0];
+    if (htmlContent) {
+      // Strip HTML tags
+      var plainText = stripHtml(htmlContent);
+      // Calculate word count
+      var wordCount = plainText.split(/\s+/).filter(function (word) {
+        return word.length > 0;
+      }).length;
+      // Calculate read time (average reading speed is 200 words per minute)
+      var readTime = Math.ceil(wordCount / 200); // in minutes
+      readTimes.push([readTime]); // Add the read time to results
+    } else {
+      readTimes.push(['']); // No content, add an empty value
+    }
+  }
+
+  // Determine the column index for the new column in the sheet
+  var lastColumn = sheet.getLastColumn();
+  var newColumnIndex = lastColumn + 1;
+
+  // Write the read times to the new column in the sheet
+  if (readTimes.length > 0) {
+    sheet.getRange(1, newColumnIndex, readTimes.length, 1).setValues(readTimes);
+  } else {
+    sheet.getRange(1, newColumnIndex).setValue('No content');
+  }
+
+  // Set the header for the new column
+  sheet.getRange(1, newColumnIndex).setValue('Read Time');
+}
+
+// Function to strip HTML tags
+function stripHtml(html) {
+  var tmp = HtmlService.createHtmlOutput(html);
+  return tmp
+    .getContent()
+    .replace(/<[^>]*>/g, '')
+    .trim();
+}
