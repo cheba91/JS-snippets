@@ -46,3 +46,27 @@
     });
   });
 </script>
+<!-- TOC highlighting to static anchors -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const anchorClass = 'anchor';
+    const activeClass = 'is--active';
+    const tocItemClass = 'toc__link';
+    const toc = document.querySelector('.toc');
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const id = entry.target.getAttribute('id');
+          if (entry.isIntersecting) {
+            document.querySelectorAll(`.${activeClass}`).forEach((z) => z.classList.remove(activeClass));
+            document.querySelector(`a[href="#${id}"]`).classList.add(activeClass);
+          }
+        });
+      },
+      { root: null, rootMargin: '0px', threshold: [0] }
+    );
+
+    document.querySelectorAll(`.${anchorClass}`).forEach((heading, i) => observer.observe(heading));
+  });
+</script>
