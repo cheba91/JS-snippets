@@ -60,13 +60,15 @@
           const id = entry.target.getAttribute('id');
           if (entry.isIntersecting) {
             document.querySelectorAll(`.${activeClass}`).forEach((z) => z.classList.remove(activeClass));
-            document.querySelector(`a[href="#${id}"]`).classList.add(activeClass);
+            const activeLink = document.querySelector(`.${tocItemClass}[href="#${id}"]`);
+            if (activeLink) activeLink.classList.add(activeClass);
           }
         });
       },
-      { root: null, rootMargin: '0px', threshold: [0] }
+      { rootMargin: '0px 0px -85% 0px' }
     );
 
-    document.querySelectorAll(`.${anchorClass}`).forEach((heading, i) => observer.observe(heading));
+    document.querySelectorAll(`.${anchorClass}`).forEach((heading) => observer.observe(heading));
   });
 </script>
+
