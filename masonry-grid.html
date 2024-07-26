@@ -31,3 +31,39 @@
     });
   });
 </script>
+
+<!-- V2 -->
+
+<script async src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js"></script>
+<style>
+  @media (max-width: 991px) {
+    .values {
+      height: auto !important;
+    }
+    .values__card {
+      transform: none !important;
+    }
+  }
+  @media (min-width: 991px) {
+    .values__card {
+      margin-bottom: 40px;
+      width: calc(50% - 20px);
+    }
+  }
+</style>
+<script>
+let msnry;
+  window.addEventListener('load', () => {
+    const options = {
+      itemSelector: '.values__card',
+      horizontalOrder: true,
+      gutter: 40, // horizontal space between cards
+    };
+    
+    if (window.innerWidth > 991) msnry = new Masonry('.values', options);
+    window.addEventListener('resize', () => {
+      if (window.innerWidth < 991) msnry.destroy();
+      else msnry = new Masonry('.values', options);
+    });
+  });
+</script>
