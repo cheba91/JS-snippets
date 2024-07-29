@@ -11,6 +11,10 @@
     portalId: '',
     formId: formId,
     target: '.hs-form-emb',
+     onFormSubmitted: ($form, data) => {
+      const submissionVals = data.submissionValues;
+      window.location.href = ``;
+    },
   });
 
   let lead = {};
