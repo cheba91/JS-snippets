@@ -36,7 +36,7 @@
    });
    
    // With coverflow and pagination
-   const projectSlider = new Swiper('.swiper-2', {
+   const swiper2 = new Swiper('.swiper-2', {
     centeredSlides: true,
     slidesPerView: 'auto',
     spaceBetween: 40,
@@ -98,3 +98,48 @@
     fill: blue;
   }
 </style>
+<script>
+   // Vertical with coverflow effect...stacking cards
+   const swiper3 = new Swiper('.swiper-3', {
+  slidesPerView: 2,
+  centeredSlides: true,
+  effect: 'coverflow',
+  speed: 800,
+  loop: true,
+  navigation: {
+    nextEl: '#swiper_next-home-news',
+    prevEl: '#swiper_prev-home-news',
+    disabledClass: "is-disabled",
+  },
+  spaceBetween: -300,
+  coverflowEffect: {
+      rotate: 0,
+      depth: 100,
+      modifier: 1,
+      slideShadows: false,
+  },
+});
+// horizontal with coverflow effect...stacking cards
+const swiper4 = new Swiper('.swiper-4', {
+  effect: 'coverflow',
+  direction: 'vertical',
+  slideToClickedSlide: true,
+  grabCursor: true,
+  centeredSlides: true,
+  slidesPerView: 'auto',
+  speed: 750,
+  loop: true,
+  coverflowEffect: {
+    rotate: 0,
+    stretch: 412,
+    depth: 100,
+    modifier: 1,
+    slideShadows: false
+  },
+  navigation: {
+    nextEl: '#swiper_next-home-world',
+    prevEl: '#swiper_prev-home-world',
+    disabledClass: "is-disabled",
+  },
+});
+</script>
