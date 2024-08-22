@@ -3,6 +3,11 @@ method: 'POST',
 url: 'https://api.hsforms.com/submissions/v3/integration/submit/port/formId',
 contentType: 'application/json',
 data: JSON.stringify(hsBody),
+
+Getting IP:
+ fetch('https://api.ipify.org?format=json')
+        .then(response => response.json())
+        .then(data => console.log(data));
 */
 
 /* Basic HubSpot submit with Chili Piper */
