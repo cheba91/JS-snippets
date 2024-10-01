@@ -17,4 +17,4 @@
 
   const sectionObserver = new IntersectionObserver(sectionIntersection, options);
   const observedSection = document.querySelector('#section-id');
-  sectionObserver.observe(roadmap);
+  sectionObserver.observe(observedSection);
