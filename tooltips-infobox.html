@@ -1,0 +1,19 @@
+<link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/light-border.css" />
+<link rel="stylesheet" href="https://unpkg.com/tippy.js@6/animations/scale.css" />
+<script src="https://unpkg.com/@popperjs/core@2"></script>
+<script src="https://unpkg.com/tippy.js@6"></script>
+
+<span data-tippy-content="Placeholder" class="tooltip"> </span>
+
+<script>
+  tippy('.tooltip', {
+    animation: 'fade',
+    duration: 200,
+    arrow: true,
+    delay: [0, 50],
+    arrowType: 'sharp',
+    theme: 'light-border',
+    maxWidth: 220,
+    interactive: true,
+  });
+</script>
