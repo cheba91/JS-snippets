@@ -31,3 +31,90 @@
     videoOverlay.classList.add('playing');
   });
 </script>
+<!-- Changing between desktop and mobile video, start playing when in veiw -->
+<script>
+  let isDesktopVideo;
+  window.addEventListener('load', () => {
+    //----------------------------------------------
+    const players = new Map();
+    let isDesktop = window.innerWidth > 479;
+
+    const initVimeoPlayer = (element, videoId) => {
+      if (!videoId) return;
+      const currentPlayer = players.get(element);
+
+      // If a player exists but with the wrong video
+      if (currentPlayer && currentPlayer.videoId !== videoId) {
+        currentPlayer.instance.destroy();
+        players.delete(element);
+      }
+
+      // Initialize a new Vimeo player if it doesn't exist
+      if (!players.has(element)) {
+        const player = new Vimeo.Player(element, {
+          id: videoId,
+          loop: true,
+          autoplay: false,
+          muted: true,
+          background: true,
+          quality: '2K',
+        });
+
+        // Store the player instance
+        players.set(element, { instance: player, videoId });
+      }
+    };
+
+    const initializeAllVideos = () => {
+      document.querySelectorAll('.content-video').forEach((element) => {
+        const videoId = isDesktop ? element.getAttribute('desktop-id') : element.getAttribute('mobile-id');
+        initVimeoPlayer(element, videoId);
+      });
+    };
+
+    // Set up Intersection Observer
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const player = players.get(entry.target)?.instance;
+          if (entry.isIntersecting) player?.play();
+        });
+      },
+      { threshold: 0.3 }
+    );
+
+    const observeAllVideos = () => {
+      document.querySelectorAll('.content-video').forEach((element) => {
+        observer.observe(element);
+      });
+    };
+
+    // Initial setup
+    initializeAllVideos();
+    observeAllVideos();
+
+    window.addEventListener('resize', () => {
+      const newIsDesktop = window.innerWidth > 479;
+      if (newIsDesktop !== isDesktop) {
+        isDesktop = newIsDesktop;
+        initializeAllVideos();
+      }
+    });
+
+    // Setup any additional videos that don't need to be toggled by breakpoint
+    document.querySelectorAll('.content-video-square').forEach((element) => {
+      const videoId = element.getAttribute('video-id');
+      const vimeo = new Vimeo.Player(element, {
+        id: videoId,
+        loop: true,
+        autoplay: false,
+        muted: true,
+        background: true,
+        quality: '2K',
+      });
+      observer.observe(element);
+      players.set(element, { instance: vimeo, videoId });
+    });
+    //----------------------------------------------
+  });
+</script>
