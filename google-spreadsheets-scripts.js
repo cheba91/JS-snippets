@@ -293,3 +293,22 @@ function stripHtml(html) {
     .replace(/<[^>]*>/g, '')
     .trim();
 }
+
+/*
+//----------- Remove "new lines" from a column -----------//
+*/
+function removeNewLinesFromColumnC() {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  
+  // Get all data from column C
+  const columnCData = sheet.getRange(1, 3, sheet.getLastRow()).getValues();
+
+  // Process each cell to remove new lines
+  const cleanedData = columnCData.map(row => [row[0].replace(/\r?\n/g, " ")]);
+
+  // Write the cleaned data back to column C
+  sheet.getRange(1, 3, cleanedData.length).setValues(cleanedData);
+
+  // Log the completion
+  Logger.log("New lines removed from column C.");
+}
