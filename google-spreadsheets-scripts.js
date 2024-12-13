@@ -312,3 +312,45 @@ function removeNewLinesFromColumnC() {
   // Log the completion
   Logger.log("New lines removed from column C.");
 }
+
+/*
+//----------- Split sheet into multiple sheets by rows -----------//
+*/
+function splitSheetByRows() {
+  // Get the active spreadsheet and the active sheet
+  const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  const sourceSheet = spreadsheet.getActiveSheet();
+
+  // Get all the data from the source sheet
+  const data = sourceSheet.getDataRange().getValues();
+  const header = data[0]; // The header row
+  const rows = data.slice(1); // All rows except the header
+
+  // Number of rows per new sheet (excluding the header)
+  const rowsPerSheet = 300;
+
+  // Calculate how many sheets are needed
+  const numSheets = Math.ceil(rows.length / rowsPerSheet);
+
+  for (let i = 0; i < numSheets; i++) {
+    // Create a new sheet
+    const newSheet = spreadsheet.insertSheet(`Part ${i + 1}`);
+
+    // Add the header row to the new sheet
+    newSheet.appendRow(header);
+
+    // Add the appropriate rows for this sheet
+    const startRow = i * rowsPerSheet;
+    const endRow = Math.min(startRow + rowsPerSheet, rows.length);
+    const rowsForSheet = rows.slice(startRow, endRow);
+
+    // Append rows to the new sheet
+    newSheet.getRange(2, 1, rowsForSheet.length, rowsForSheet[0].length).setValues(rowsForSheet);
+  }
+
+  SpreadsheetApp.flush();
+
+  // Notify the user that the process is complete
+  SpreadsheetApp.getUi().alert(`${numSheets} new sheets created.`);
+}
+
