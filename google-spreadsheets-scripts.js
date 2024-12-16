@@ -24,6 +24,46 @@ function fixInvalidHTML() {
 }
 
 /*
+//----------- Sanitize HTML -----------//
+*/
+function sanitizeHTML() {
+  // Load the spreadsheet and the active sheet
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  
+  // Get all the data in column C
+  const range = sheet.getRange(1, 3, sheet.getLastRow(), 1);
+  const columnData = range.getValues();
+
+  // Function to sanitize HTML content
+  function sanitizeHTML(html) {
+    if (!html) return ''; // Return empty if the content is null or empty
+
+    // Use a temporary HTML document to parse and sanitize
+    const htmlOutput = HtmlService.createHtmlOutput(html).getContent();
+
+    // Define allowed tags (modify as necessary)
+    const allowedTags = [
+      'a', 'b', 'strong', 'i', 'em', 'p', 'ul', 'ol', 'li', 'blockquote', 
+      'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'img'
+    ];
+
+    // Regex to match HTML tags
+    const tagRegex = /<\/?(\w+)([^>]*)>/g;
+
+    // Sanitize the content by keeping only allowed tags
+    return htmlOutput.replace(tagRegex, (match, tagName) => {
+      return allowedTags.includes(tagName.toLowerCase()) ? match : '';
+    });
+  }
+
+  // Process each cell in the column
+  const sanitizedData = columnData.map(row => [sanitizeHTML(row[0])]);
+
+  // Write the sanitized data back to column C
+  range.setValues(sanitizedData);
+}
+
+/*
 //----------- Replace asset links -----------//
 */
 function replaceAssetLinks() {
