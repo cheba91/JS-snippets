@@ -1,7 +1,7 @@
 
   window.addEventListener('load', () => {
     const section = document.querySelector('.scroll-section');
-    const lastElement = document.querySelector('.blue-card[scroll-element="last"]');
+    const lastElement = document.querySelector('.card[scroll-element="last"]');
 
     const sectionRect = section.getBoundingClientRect();
     const lastElementRect = lastElement.getBoundingClientRect();
