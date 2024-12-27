@@ -22,7 +22,7 @@
     content.querySelectorAll(collectHeadings).forEach((heading, i) => {
       observer.observe(heading);
       let str = heading.innerHTML;
-      str = str.replace(/[°&\/\\#,+()$~%.'":;*?<>{}0-9]/g, '').replace(/\s+/g, '-');
+      str = str.replace(/[°&\/\\#,+()$~%.'":;*?<>{}0-9!]/g, '').replace(/\s+/g, '-');
       heading.setAttribute('id', '-' + str);
       const item = document.createElement('a');
       item.innerHTML = heading.innerHTML;
