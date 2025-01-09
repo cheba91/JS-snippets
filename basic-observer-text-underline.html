@@ -1,0 +1,33 @@
+<style>
+  .gradient-underline-wrap::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    aspect-ratio: 21.5625 / 1;
+    background-image: url(<LINK>);
+    background-repeat: no-repeat;
+    background-size: cover;
+    clip-path: inset(0 100% 0 0);
+    transition: clip-path 0.9s ease-out;
+  }
+  .gradient-underline-wrap.is--active::before {
+    clip-path: inset(0 0 0 0);
+  }
+</style>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const underlineElements = document.querySelectorAll('.gradient-underline-wrap');
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) entry.target.classList.add('is--active');
+        });
+      },
+      { threshold: 0.2 }
+    );
+
+    underlineElements.forEach((el) => observer.observe(el));
+  });
+</script>
