@@ -393,4 +393,124 @@ function splitSheetByRows() {
   // Notify the user that the process is complete
   SpreadsheetApp.getUi().alert(`${numSheets} new sheets created.`);
 }
+/*
+//----------- Replace WordPress tables for Webflow tables -----------//
+*/
+function replaceWPtablesWithWF() {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  const column = 3; // Column C (1-based index)
+  const range = sheet.getRange(1, column, sheet.getLastRow()); // Get all data in column C
+  const values = range.getValues(); // Get values as a 2D array
 
+  // Iterate through each row in column C
+  const updatedValues = values.map((row) => {
+    if (row[0]) {
+      // Check if the cell is not empty
+      let cellValue = row[0];
+      const stack = []; // Stack to track replaced tags
+      let result = ''; // Resultant string
+      let index = 0;
+
+      // Use a regex to find all opening and closing tags
+      const regex = /<figure class="wp-block-table">|<\/figure>/g;
+      let match;
+
+      while ((match = regex.exec(cellValue)) !== null) {
+        const tag = match[0];
+
+        if (tag === '<figure class="wp-block-table">') {
+          // Replace the opening tag and push its index onto the stack
+          stack.push(index);
+          result += cellValue.substring(index, match.index) + "<div data-rt-embed-type='true'>";
+        } else if (tag === '</figure>' && stack.length > 0) {
+          // Replace the closing tag only if it corresponds to a replaced opening tag
+          stack.pop();
+          result += cellValue.substring(index, match.index) + '</div>';
+        } else {
+          // Add the closing tag unchanged if it's not part of a replaced pair
+          result += cellValue.substring(index, match.index) + tag;
+        }
+
+        // Update the index to continue processing
+        index = regex.lastIndex;
+      }
+
+      // Append any remaining content in the cell after the last match
+      result += cellValue.substring(index);
+
+      return [result]; // Return the updated cell value
+    }
+
+    return row; // Return the original row if empty
+  });
+
+  // Update the column with modified values
+  range.setValues(updatedValues);
+}
+/*
+//----------- Replace WordPress tables for Webflow tables -----------//
+*/
+function replaceYouTubeEmbeds() {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  const column = 3; // Column C (1-based index)
+  const range = sheet.getRange(1, column, sheet.getLastRow()); // Get all data in column C
+  const values = range.getValues(); // Get values as a 2D array
+
+  // Regex to capture the entire YouTube embed, including wrapping <p> tags
+  const youtubeRegex = /<p>\s*<iframe[^>]*?src="https:\/\/www\.youtube\.com\/embed\/([^"?]+)[^>]*?title="([^"]+)"[^>]*?><\/iframe>\s*<\/p>/;
+
+  let cellsUpdated = 0;
+
+  const updatedValues = values.map((row, rowIndex) => {
+    if (row[0]) {
+      // Check if the cell is not empty
+      let cellValue = row[0];
+      const match = cellValue.match(youtubeRegex);
+
+      if (match) {
+        const videoId = match[1]; // Extract the video ID
+        const title = match[2]; // Extract the video title
+
+        Logger.log(`Matched Row ${rowIndex + 1}: Video ID = ${videoId}, Title = ${title}`);
+
+        // Create the new embed structure
+        const newEmbed = `
+  <figure
+    class="w-richtext-figure-type-video w-richtext-align-fullwidth"
+    style="padding-bottom: 56.206088992974244%"
+    data-rt-type="video"
+    data-rt-align="fullwidth"
+    data-rt-max-width=""
+    data-rt-max-height="56.206088992974244%"
+    data-rt-dimensions="854:480"
+    data-page-url="https://www.youtube.com/watch?v=${videoId}"
+  >
+    <div id="">
+      <iframe
+        allowfullscreen="true"
+        frameborder="0"
+        scrolling="no"
+        src="https://www.youtube.com/embed/${videoId}"
+        title="${title}"
+      ></iframe>
+    </div>
+  </figure>`;
+
+        // Replace the old iframe structure with the new embed
+        cellValue = cellValue.replace(match[0], newEmbed);
+        cellsUpdated++; // Increment the counter for updated cells
+      } else {
+        Logger.log(`No match found for Row ${rowIndex + 1}: ${cellValue}`);
+      }
+
+      return [cellValue]; // Return the updated cell
+    }
+    return row; // Return the original row if no matches
+  });
+
+  // Write back the updated values to the spreadsheet
+  range.setValues(updatedValues);
+
+  // Provide feedback to the user
+  SpreadsheetApp.getUi().alert(`${cellsUpdated} YouTube embeds updated in column C. Check logs for details.`);
+}
