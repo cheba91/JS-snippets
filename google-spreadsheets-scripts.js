@@ -411,28 +411,29 @@ function replaceWPtablesWithWF() {
       let result = ''; // Resultant string
       let index = 0;
 
-      // Use a regex to find all opening and closing tags
-      const regex = /<figure class="wp-block-table">|<\/figure>/g;
+      // Modified regex to match figure tags containing table elements
+      const regex = /<figure[^>]*>\s*<table|<\/figure>/g;
       let match;
 
       while ((match = regex.exec(cellValue)) !== null) {
         const tag = match[0];
 
-        if (tag === '<figure class="wp-block-table">') {
+        if (tag.startsWith('<figure')) {
           // Replace the opening tag and push its index onto the stack
           stack.push(index);
           result += cellValue.substring(index, match.index) + "<div data-rt-embed-type='true'>";
+          // Adjust the index to include the table tag
+          index = match.index + tag.length - '<table'.length;
         } else if (tag === '</figure>' && stack.length > 0) {
           // Replace the closing tag only if it corresponds to a replaced opening tag
           stack.pop();
           result += cellValue.substring(index, match.index) + '</div>';
+          index = regex.lastIndex;
         } else {
           // Add the closing tag unchanged if it's not part of a replaced pair
           result += cellValue.substring(index, match.index) + tag;
+          index = regex.lastIndex;
         }
-
-        // Update the index to continue processing
-        index = regex.lastIndex;
       }
 
       // Append any remaining content in the cell after the last match
