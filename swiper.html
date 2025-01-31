@@ -143,3 +143,32 @@ const swiper4 = new Swiper('.swiper-4', {
   },
 });
 </script>
+<script>
+   // Optionally load Swiper based on screen width
+   window.addEventListener('load', () => {
+  const mobileBreakpoint = 768;
+  if (window.innerWidth < mobileBreakpoint) {
+    // Load Swiper CSS
+    let cssLink = document.createElement('link');
+    cssLink.rel = 'stylesheet';
+    cssLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.0.5/swiper-bundle.css';
+    document.head.appendChild(cssLink);
+
+    // Load Swiper JS
+    let script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.0.5/swiper-bundle.min.js';
+    document.body.appendChild(script);
+  }
+
+  // Reload the page if on desktop & scripts loaded, or on mobile & scripts not loaded
+  window.addEventListener('resize', () => {
+    if (
+      (window.innerWidth <= mobileBreakpoint && !document.querySelector('link[href*="swiper-bundle.css"]')) ||
+      (window.innerWidth > mobileBreakpoint && document.querySelector('link[href*="swiper-bundle.css"]'))
+    ) {
+      location.reload();
+    }
+  });
+});
+
+</script>
