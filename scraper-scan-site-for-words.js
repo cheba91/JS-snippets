@@ -5,10 +5,11 @@ const fs = require('fs');
 
 const liveDomain = '';
 const stagingDomain = '';
-const sitemapLink = `${liveDomain}/sitemap.xml`;
 const targetWords = ['', ''];
+const templatePages = ['blog', 'category']; // Template page slugs to scan only once
+const sitemapLink = `${liveDomain}/sitemap.xml`;
 
-const foundUrls = [];
+const resultUrls = [];
 
 const fetchSitemap = async (sitemapUrl) => {
   try {
@@ -21,12 +22,30 @@ const fetchSitemap = async (sitemapUrl) => {
 
 const parseSitemap = async (sitemapXml) => {
   const parser = new xml2js.Parser();
+  const seenTemplates = new Set();
+
   try {
     const result = await parser.parseStringPromise(sitemapXml);
-    const urls = result.urlset.url.map((url) => url.loc[0].trim());
+    const urls = [];
+
+    for (const url of result.urlset.url) {
+      const loc = url.loc[0].trim();
+
+      // Check if the URL matches any template page
+      const templateMatch = templatePages.find((template) => loc.includes(`/${template}/`));
+
+      if (templateMatch) {
+        if (!seenTemplates.has(templateMatch)) {
+          urls.push(loc);
+          seenTemplates.add(templateMatch);
+        }
+      } else urls.push(loc);
+    }
+
     return urls;
   } catch (error) {
     console.error(`Error parsing sitemap XML: ${error}`);
+    return [];
   }
 };
 
@@ -36,10 +55,13 @@ const scrapePage = async (url) => {
     const $ = cheerio.load(data);
 
     const bodyText = $('body').text();
-    const hasTargetWord = targetWords.some((word) => bodyText.includes(word));
+    // const isMatch = targetWords.some((word) => bodyText.includes(word));
+    const isMatch = targetWords.some((word) => $(`[class^="${word}"]`).length > 0);
+    // const isMatch = targetWords.some((word) => $(`.${word}`).length > 0); // Class selector
+    // const isMatch = targetWords.some((word) => $(`${[word]}`).length > 0); // Tag selector
 
-    if (hasTargetWord) {
-      foundUrls.push(url);
+    if (isMatch) {
+      resultUrls.push(url);
     }
   } catch (error) {
     console.error(`Error scraping ${url}:`, error);
@@ -53,15 +75,12 @@ const startScraping = async (sitemapUrl) => {
   const scrapePromises = stagingUrls.map((url) => scrapePage(url));
   await Promise.all(scrapePromises);
 
-  console.log('Found URLs:', foundUrls);
+  //   console.log('Found URLs:', resultUrls);
 
-  const content = foundUrls.join('\n');
-  fs.writeFile('foundUrls.txt', content, (err) => {
-    if (err) {
-      console.error('Error writing to file:', err);
-    } else {
-      console.log('Successfully wrote to file');
-    }
+  const content = resultUrls.join('\n');
+  fs.writeFile('resultUrls.txt', content, (err) => {
+    if (err) console.error('Error writing to file:', err);
+    else console.log('Successfully wrote to file');
   });
 };
 
