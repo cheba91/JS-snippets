@@ -449,7 +449,7 @@ function replaceWPtablesWithWF() {
   range.setValues(updatedValues);
 }
 /*
-//----------- Replace WordPress tables for Webflow tables -----------//
+//----------- Replace Youtube videos -----------//
 */
 function replaceYouTubeEmbeds() {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
