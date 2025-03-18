@@ -390,8 +390,6 @@ function splitSheetByRows() {
 
   SpreadsheetApp.flush();
 
-  // Notify the user that the process is complete
-  SpreadsheetApp.getUi().alert(`${numSheets} new sheets created.`);
 }
 /*
 //----------- Replace WordPress tables for Webflow tables -----------//
