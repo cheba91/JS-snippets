@@ -118,3 +118,37 @@
     //----------------------------------------------
   });
 </script>
+<!-- With autoplay loop initially, then load player -->
+<script async src="https://player.vimeo.com/api/player.js"></script>
+<div style="padding: 56.25% 0 0 0; position: relative">
+  <iframe
+    src="https://player.vimeo.com/video/videoId?h=2badc6bc8a&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479&amp;autoplay=1&amp;muted=1&amp;loop=1&amp;background=1&amp;controls=0"
+    frameborder="0"
+    allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
+    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%"
+    title="Marc Accetta - Born To Win"
+    class="vimeo-video"
+  ></iframe>
+</div>
+
+<script>
+  const iframe = document.querySelector('.vimeo-video');
+  const playButton = document.querySelector('.vimeo-video__play');
+  let iframeSrc = iframe.getAttribute('src');
+
+  playButton.addEventListener('click', () => {
+    // Add controls to iframe src
+    let newSrc = iframeSrc.replace('background=1', 'controls=1');
+    // Reload iframe with controls enabled
+    iframe.setAttribute('src', newSrc);
+    iframe.onload = () => {
+      const player = new Vimeo.Player(iframe);
+      player.setCurrentTime(0);
+      player.setLoop(false);
+      player.setMuted(false);
+      player.play();
+    };
+
+    playButton.classList.add('hidden');
+  });
+</script>
