@@ -1,0 +1,33 @@
+<script async src="https://unpkg.com/split-type"></script>
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<style>
+  .word {
+    display: inline-block !important;
+  }
+</style>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const scrollWrap = document.querySelector('.scroll-wrap');
+    const heading = document.querySelector('.scroll-wrap .h1');
+
+    const splitHeading = new SplitType(heading, { types: 'words, chars' });
+    splitHeading.chars.forEach((char) => (char.style.opacity = 0));
+
+    gsap.fromTo(
+      splitHeading.chars,
+      { opacity: 0 },
+      {
+        opacity: 1,
+        stagger: 0.05,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: scrollWrap,
+          start: '10% center',
+          end: '80% center',
+          scrub: true,
+        },
+      }
+    );
+  });
+</script>
