@@ -5,8 +5,8 @@ const fs = require('fs');
 
 const liveDomain = '';
 const stagingDomain = '';
-const targetWords = ['', ''];
-const templatePages = ['blog', 'category']; // Template page slugs to scan only once
+const targetWords = ['fs-cmsslider-element', 'fs-cmsslider-element'];
+const templatePages = []; // Template page slugs to scan only once
 const sitemapLink = `${liveDomain}/sitemap.xml`;
 
 const resultUrls = [];
@@ -56,9 +56,12 @@ const scrapePage = async (url) => {
 
     const bodyText = $('body').text();
     // const isMatch = targetWords.some((word) => bodyText.includes(word));
-    const isMatch = targetWords.some((word) => $(`[class^="${word}"]`).length > 0);
+      const isMatch = targetWords.some((word) => $(`[class^="${word}"]`).length > 0);
+    // const isMatch = targetWords.some((word) => $(`form`).length > 0);
     // const isMatch = targetWords.some((word) => $(`.${word}`).length > 0); // Class selector
     // const isMatch = targetWords.some((word) => $(`${[word]}`).length > 0); // Tag selector
+    // Select a script tag with the word win src
+    // const isMatch = targetWords.some((word) => $(`iframe[src*="${word}"]`).length > 0);
 
     if (isMatch) {
       resultUrls.push(url);
