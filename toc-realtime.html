@@ -71,4 +71,28 @@
     document.querySelectorAll(`.${anchorClass}`).forEach((heading) => observer.observe(heading));
   });
 </script>
+<!-- V2 - TOC highlighting to static anchors -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const anchorClass = 'anchor';
+    const activeClass = 'is--active';
+    const tocItemClass = 'toc_links-item';
+    const offset = 130;
 
+    const onScroll = () => {
+      let currentId = null;
+      document.querySelectorAll(`.${anchorClass}`).forEach((section) => {
+        const rect = section.getBoundingClientRect();
+        if (rect.top - offset <= 0) currentId = section.id;
+      });
+
+      if (!currentId) return;
+
+      document.querySelectorAll(`.${activeClass}`).forEach((el) => el.classList.remove(activeClass));
+      const newActive = document.querySelector(`.${tocItemClass}[href="#${currentId}"]`);
+      if (newActive) newActive.classList.add(activeClass);
+    };
+
+    document.addEventListener('scroll', onScroll, { passive: true });
+  });
+</script>
