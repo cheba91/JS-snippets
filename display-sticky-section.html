@@ -1,0 +1,55 @@
+<!-- 
+Display the item in a sticky section when scrolling through the left section. 
+-->
+<style>
+  .solutions-layout .solutions__right .solutions__right__item {
+    opacity: 0;
+    transition: all 0.3s ease-in-out;
+  }
+  .solutions-layout .solutions__right .solutions__right__item.is--active {
+    opacity: 1;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const anchors = document.querySelectorAll('.solutions-layout .solutions__left__item-anchor');
+    const assetElements = document.querySelectorAll('.solutions-layout .solutions__right .solutions__right__item');
+    const rightInner = document.querySelector('.solutions__right__inner');
+    let currentIndex = null;
+
+    const changeIndex = (index) => {
+      if (currentIndex === index) return;
+      currentIndex = index;
+
+      assetElements.forEach((assetElement) => {
+        const assetIndex = assetElement.getAttribute('solutions-item');
+        assetElement.classList.toggle('is--active', assetIndex === index);
+      });
+    };
+
+    const checkVisibleAnchor = () => {
+      if (!rightInner) return;
+      const rightInnerRect = rightInner.getBoundingClientRect();
+      let bestMatch = null;
+
+      anchors.forEach((anchor) => {
+        const rect = anchor.getBoundingClientRect();
+        const anchorMid = rect.top + rect.height / 2;
+
+        if (anchorMid >= rightInnerRect.top && anchorMid <= rightInnerRect.bottom) {
+          bestMatch = anchor;
+        }
+      });
+
+      if (bestMatch) {
+        const anchorIndex = bestMatch.getAttribute('solutions-anchor');
+        changeIndex(anchorIndex);
+      }
+    };
+
+    window.addEventListener('scroll', checkVisibleAnchor);
+    window.addEventListener('resize', checkVisibleAnchor);
+    checkVisibleAnchor();
+  });
+</script>
