@@ -34,3 +34,27 @@ window.addEventListener('load', () => {
   ['mousemove', 'touchstart'].forEach((ev) => window.addEventListener(ev, loadScriptsOnInteract));
   // Other script that need only "load" event
 });
+
+// Load just HS script
+window.addEventListener('load', () => {
+  ['mousemove', 'touchstart'].forEach((e) =>
+    window.addEventListener(e, () => {
+      if (window.hsScriptsCreated) return;
+      // Create the script
+      const script = document.createElement('script');
+      script.src = 'https://js.hsforms.net/forms/embed/v2.js';
+      script.async = true;
+      script.type = 'text/javascript';
+      document.head.appendChild(script);
+      // Create the form
+      script.onload = () => {
+        hbspt.forms.create({
+          region: 'na1',
+          portalId: '',
+          formId: '',
+        });
+      };
+      window.hsScriptsCreated = true;
+    })
+  );
+});
