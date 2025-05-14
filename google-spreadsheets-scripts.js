@@ -1,4 +1,8 @@
 /*
+Any embeds need to to be wrapped in a <div data-rt-embed-type="true"></div>
+*/
+
+/*
 //----------- Fix Invalid HTML -----------//
 */
 function fixInvalidHTML() {
