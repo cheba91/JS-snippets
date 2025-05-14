@@ -517,3 +517,47 @@ function replaceYouTubeEmbeds() {
   // Provide feedback to the user
   SpreadsheetApp.getUi().alert(`${cellsUpdated} YouTube embeds updated in column C. Check logs for details.`);
 }
+
+/*
+//----------- Extract tags from a column, make them unique, slugify, add to new spreadsheet -----------//
+*/
+function extractUniqueTagsToNewSheet() {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  const tagColumnIndex = 26; // Column Z
+  const lastRow = sheet.getLastRow();
+  const range = sheet.getRange(1, tagColumnIndex, lastRow);
+  const values = range.getValues();
+
+  const tagSet = new Set();
+
+  // Collect and split tags
+  for (let i = 0; i < values.length; i++) {
+    const cell = values[i][0];
+    if (cell && typeof cell === 'string') {
+      const tags = cell.split('|').map(t => t.trim());
+      tags.forEach(tag => {
+        if (tag) tagSet.add(tag);
+      });
+    }
+  }
+
+  // Convert to array and generate slugs
+  const tagArray = Array.from(tagSet).sort();
+  const tagData = tagArray.map(tag => [tag, tag.toLowerCase().replace(/\s+/g, '-')]);
+
+  // Create or clear 'Unique Tags' sheet
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let tagSheet = ss.getSheetByName('Unique Tags');
+
+  if (tagSheet) {
+    tagSheet.clear(); // Wipe old data
+  } else {
+    tagSheet = ss.insertSheet('Unique Tags');
+  }
+
+  // Write headers
+  tagSheet.getRange(1, 1, 1, 2).setValues([['Tag', 'Slug']]);
+
+  // Write tag data
+  tagSheet.getRange(2, 1, tagData.length, 2).setValues(tagData);
+}
