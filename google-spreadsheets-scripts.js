@@ -561,3 +561,40 @@ function extractUniqueTagsToNewSheet() {
   // Write tag data
   tagSheet.getRange(2, 1, tagData.length, 2).setValues(tagData);
 }
+/*
+//----------- Create excerpt from the first two sentences -----------//
+*/
+function extractFirstTwoSentences() {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  const lastRow = sheet.getLastRow();
+  const inputRange = sheet.getRange(1, 3, lastRow); // Column C
+  const outputRange = sheet.getRange(1, 4, lastRow); // Column D
+  const inputValues = inputRange.getValues();
+  const outputValues = [];
+
+  for (let i = 0; i < inputValues.length; i++) {
+    const htmlContent = inputValues[i][0];
+
+    if (typeof htmlContent === 'string' && htmlContent.trim() !== '') {
+      // Remove HTML tags
+      const text = htmlContent.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+
+      // Split into sentences
+      const sentences = text.match(/[^.!?]+[.!?]/g);
+
+      if (sentences && sentences.length > 0) {
+        // Get the first two sentences
+        const summary = sentences.slice(0, 2).join(' ').trim();
+        outputValues.push([summary]);
+      } else {
+        // No sentence found, just push cleaned text
+        outputValues.push([text]);
+      }
+    } else {
+      outputValues.push(['']); // Empty or non-string cell
+    }
+  }
+
+  // Write to Column D
+  outputRange.setValues(outputValues);
+}
