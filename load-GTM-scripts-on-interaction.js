@@ -59,3 +59,42 @@ window.addEventListener('load', () => {
     })
   );
 });
+
+  // Load scripts only when the element is in view
+  const loadScripts = (urls, callback) => {
+    let loaded = 0;
+    urls.forEach((src) => {
+      const script = document.createElement('script');
+      script.src = src;
+      script.async = true;
+      script.onload = () => {
+        if (++loaded === urls.length) callback?.();
+      };
+      script.onerror = () => console.error(`Failed to load script: ${src}`);
+      document.body.appendChild(script);
+    });
+  };
+
+  const lazyLoadScriptsOnView = (selector, scriptUrls, onLoaded) => {
+    const target = document.querySelector(selector);
+    if (!target) return console.warn(`Element ${selector} not found`);
+
+    const load = () => loadScripts(scriptUrls, onLoaded);
+
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver(
+        (entries, obs) => {
+          if (entries[0].isIntersecting) {
+            load();
+            obs.disconnect();
+          }
+        },
+        { threshold: 0.1 }
+      );
+      observer.observe(target);
+    } else load(); // Fallback
+  };
+  // Usage
+  lazyLoadScriptsOnView('#selector', ['script-url-1', 'script-url-2'], () => {
+    console.log('All scripts loaded — now run your init code here');
+  });
