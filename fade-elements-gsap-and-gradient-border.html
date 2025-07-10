@@ -1,3 +1,35 @@
+<!-- Gradient borders on elements -->
+<style>
+  :root {
+    --highlight-blue-green: radial-gradient(100% 100% at 100% 100%, rgba(94, 219, 174, 0.15) 0%, rgba(0, 180, 255, 0) 100%),
+      linear-gradient(315deg, #5edbae 0%, rgba(85, 188, 185, 0) 10%, rgba(62, 113, 212, 0) 90%, #2b34ea 100%);
+  }
+  [gradient-border] {
+    position: relative;
+  }
+  [gradient-border]::after {
+    content: '';
+    position: absolute;
+    left: 0%;
+    top: 0%;
+    right: 0%;
+    bottom: 0%;
+    opacity: 1;
+    border-radius: 12px;
+    -webkit-mask: linear-gradient(black, black) content-box, linear-gradient(black, black);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(black, black) content-box, linear-gradient(black, black);
+    mask-composite: exclude;
+    padding: 1px;
+    pointer-events: none;
+  }
+  [border-blue-green]::after {
+    background-image: var(--highlight-blue-green);
+    padding: 1px;
+  }
+</style>
+
+<!-- Fade page elements one by one -->
 <style>
   [fade] {
     opacity: 0;
