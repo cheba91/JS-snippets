@@ -1,0 +1,36 @@
+<style>
+  [fade] {
+    opacity: 0;
+    transform: translateY(5em);
+    transition: opacity 1.2s cubic-bezier(0.19, 1, 0.22, 1), transform 1.2s cubic-bezier(0.19, 1, 0.22, 1);
+    transition-delay: 0s;
+  }
+
+  [fade].revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    gsap.registerPlugin(ScrollTrigger);
+    let mm = gsap.matchMedia();
+    const fade = () => {
+      const e = document.querySelectorAll('[fade]');
+      ScrollTrigger.batch(e, {
+        once: !0,
+        onEnter: (e) => {
+          e.forEach((e, t) => {
+            (e.style.transitionDelay = 0.1 * t + 's'), e.classList.add('revealed');
+            const o = (t) => {
+              ('opacity' !== t.propertyName && 'transform' !== t.propertyName) ||
+                ((e.style.transitionDelay = ''), e.removeEventListener('transitionend', o));
+            };
+            e.addEventListener('transitionend', o);
+          });
+        },
+      });
+    };
+    mm.add('(min-width: 992px)', fade);
+  });
+</script>
