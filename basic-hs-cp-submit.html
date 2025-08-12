@@ -55,3 +55,27 @@ Getting IP:
     }
   });
 </script>
+<!-- Load HS only if needed -->
+<div class="hubspot-placeholder"></div>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Check if hbspt is defined. If not, create a script
+    if (typeof hbspt === 'undefined') {
+      const script = document.createElement('script');
+      script.src = '//js.hsforms.net/forms/embed/v2.js';
+      script.async = true;
+      document.body.appendChild(script);
+
+      // On script loaded
+      script.onload = () => {
+        hbspt.forms.create({
+          portalId: '<portal_id>',
+          formId: '<form_id>',
+          region: '<region>',
+          target: '.hubspot-placeholder',
+        });
+      };
+    }
+  });
+</script>
+
