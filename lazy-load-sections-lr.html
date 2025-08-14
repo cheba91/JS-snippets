@@ -1,23 +1,29 @@
 <style>
   /* Section load when in view */
-  [load-section][initial] [slide-left] {
+  [load-section][initial] [slide-left],
+  [load-section][initial] [slide='left'] {
     opacity: 0;
     transition: transform 0.9s cubic-bezier(0, 0.86, 0, 0.966), opacity 0.5s ease;
     transform: translateX(-100vw);
   }
-  [load-section][initial] [slide-right] {
+  [load-section][initial] [slide-right],
+  [load-section][initial] [slide='right'] {
     opacity: 0;
     transition: transform 0.9s cubic-bezier(0, 0.86, 0, 0.966), opacity 0.5s ease;
     transform: translateX(100vw);
   }
   [load-section][loaded] [slide-left],
-  [load-section][loaded] [slide-right] {
+  [load-section][loaded] [slide-right],
+  [load-section][loaded] [slide='left'],
+  [load-section][loaded] [slide='right'] {
     transform: translateX(0);
     opacity: 1;
   }
   /* Delay each subsequent "slide-left" and "slide-right" element */
   [load-section][loaded] [slide-left],
-  [load-section][loaded] [slide-right] {
+  [load-section][loaded] [slide-right],
+  [load-section][loaded] [slide='left'],
+  [load-section][loaded] [slide='right'] {
     transition-delay: calc(0.1s * var(--i));
   }
 </style>
@@ -36,7 +42,7 @@
 
     document.querySelectorAll('[load-section]').forEach((section) => {
       section.setAttribute('initial', '');
-      const slidingElements = section.querySelectorAll('[slide-left], [slide-right]');
+      const slidingElements = section.querySelectorAll('[slide-left], [slide-right], [slide="left"], [slide="right"]');
       slidingElements.forEach((el, index) => el.style.setProperty('--i', index));
       observer.observe(section);
     });
