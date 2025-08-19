@@ -13,8 +13,8 @@
     if (Object.keys(utms).length > 0) localStorage.setItem('utms', JSON.stringify(utms));
 
     // Add UTMs to all Calendly links
-    const savedUtms = localStorage.getItem('utms');
-    if (savedUtms) {
+    const savedUtms = JSON.parse(localStorage.getItem('utms') || '{}');
+    if (Object.keys(utms).length > 0) {
       const utms = JSON.parse(savedUtms);
       const calendlyLinks = document.querySelectorAll('a[href*="calendly.com"]');
       calendlyLinks.forEach((link) => {
