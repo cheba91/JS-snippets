@@ -16,6 +16,19 @@
     j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
     f.parentNode.insertBefore(j, f);
 
+    // load gtag
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function () {
+      window.dataLayer.push(arguments);
+    };
+    window.gtag('js', new Date());
+    window.gtag('config', 'G-000000000');
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = 'https://www.googletagmanager.com/gtag/js?id=G-000000000';
+    const firstScript = document.getElementsByTagName('script')[0];
+    firstScript.parentNode.insertBefore(script, firstScript);
+
     // Load other scripts
     scriptsToLoad.forEach((src) => {
       const script = document.createElement('script');
@@ -30,32 +43,31 @@
 
   window.addEventListener('load', () => {
     ['mousemove', 'touchstart', 'click', 'keydown'].forEach((ev) => window.addEventListener(ev, loadScriptsOnInteract, { once: true }));
-    // Other script that need only "load" event
   });
 
-// Load just HS script
-window.addEventListener('load', () => {
-  ['mousemove', 'touchstart'].forEach((e) =>
-    window.addEventListener(e, () => {
-      if (window.hsScriptsCreated) return;
-      // Create the script
-      const script = document.createElement('script');
-      script.src = 'https://js.hsforms.net/forms/embed/v2.js';
-      script.async = true;
-      script.type = 'text/javascript';
-      document.head.appendChild(script);
-      // Create the form
-      script.onload = () => {
-        hbspt.forms.create({
-          region: 'na1',
-          portalId: '',
-          formId: '',
-        });
-      };
-      window.hsScriptsCreated = true;
-    })
-  );
-});
+  // Load just HS script
+  window.addEventListener('load', () => {
+    ['mousemove', 'touchstart'].forEach((e) =>
+      window.addEventListener(e, () => {
+        if (window.hsScriptsCreated) return;
+        // Create the script
+        const script = document.createElement('script');
+        script.src = 'https://js.hsforms.net/forms/embed/v2.js';
+        script.async = true;
+        script.type = 'text/javascript';
+        document.head.appendChild(script);
+        // Create the form
+        script.onload = () => {
+          hbspt.forms.create({
+            region: 'na1',
+            portalId: '',
+            formId: '',
+          });
+        };
+        window.hsScriptsCreated = true;
+      })
+    );
+  });
 
   // Load scripts only when the element is in view
   const loadScripts = (urls, callback) => {
