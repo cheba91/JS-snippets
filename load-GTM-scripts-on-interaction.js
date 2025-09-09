@@ -29,7 +29,7 @@
   };
 
   window.addEventListener('load', () => {
-    ['mousemove', 'touchstart'].forEach((ev) => window.addEventListener(ev, loadScriptsOnInteract, { once: true }));
+    ['mousemove', 'touchstart', 'click', 'keydown'].forEach((ev) => window.addEventListener(ev, loadScriptsOnInteract, { once: true }));
     // Other script that need only "load" event
   });
 
