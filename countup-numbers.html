@@ -1,27 +1,31 @@
-<script async src="https://cdn.jsdelivr.net/npm/countup@1.8.2/dist/countUp.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/countup@1.8.2/dist/countUp.min.js"></script>
 <script>
-window.addEventListener('load', () => {
-  const handleIntersection = (entries, observer) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        const el = entry.target;
-        const endVal = parseFloat(el.textContent);
-        const decimals = parseInt(el.dataset.decimalPlaces || '0', 10);
+  window.addEventListener('load', () => {
+    const handleIntersection = (entries, observer) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const el = entry.target;
+          const endVal = parseFloat(el.textContent);
+          const decimals = parseInt(el.getAttribute('decimalPlaces') || '0', 10);
 
-        const counter = new CountUp(el, 0, endVal, decimals, 3);
-        if (!counter.error) {
-          counter.start();
-          observer.unobserve(el);
-        } else {
-          console.error(counter.error);
+          const options = {
+            useEasing: true,
+            useGrouping: true,
+            decimal: ',',
+          };
+          const counter = new CountUp(el, 0, endVal, decimals, 3, options);
+          if (!counter.error) {
+            counter.start();
+            observer.unobserve(el);
+          } else {
+            console.error(counter.error);
+          }
         }
-      }
-    });
-  };
+      });
+    };
 
-  const counters = document.querySelectorAll('[countup]');
-  const observer = new IntersectionObserver(handleIntersection, { threshold: 0.1 });
-  counters.forEach((counter) => observer.observe(counter));
-});
-
+    const counters = document.querySelectorAll('[countup]');
+    const observer = new IntersectionObserver(handleIntersection, { threshold: 0.1 });
+    counters.forEach((counter) => observer.observe(counter));
+  });
 </script>
