@@ -169,4 +169,55 @@
     }
   });
 </script>
+<script>
+  // Load multiple videos, set as muted BG videos, reload player when clicked on custom play btn
+window.addEventListener('load', () => {
+  document.querySelectorAll('.vimeo-video').forEach((playerEl) => {
+    const playBtn = playerEl.parentElement.querySelector('.play-btn');
+    const videoId = playerEl.getAttribute('video-id');
 
+    if (!playBtn) return;
+
+    const player = new Vimeo.Player(playerEl, {
+      id: videoId,
+      autoplay: true,
+      muted: true,
+      controls: false,
+      title: false,
+      byline: false,
+      portrait: false,
+      dnt: true,
+      fullscreen: false,
+      quality: '720p',
+      loop: true,
+    });
+
+    player.on('loaded', () => {
+      playBtn.classList.remove('hidden');
+
+      playBtn.addEventListener('click', () => {
+        playBtn.classList.add('hidden');
+        player.destroy();
+        const newPlayer = new Vimeo.Player(playerEl, {
+          id: videoId,
+          autoplay: true,
+          muted: false,
+          controls: true,
+          title: false,
+          byline: false,
+          portrait: false,
+          dnt: true,
+          fullscreen: true,
+          quality: '720p',
+        });
+
+        newPlayer.ready().then(() => {
+          newPlayer.setCurrentTime(0);
+          newPlayer.play();
+        });
+      });
+    });
+  });
+});
+
+</script>
