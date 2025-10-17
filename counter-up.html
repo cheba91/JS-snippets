@@ -1,31 +1,42 @@
 <script async src="https://cdn.jsdelivr.net/npm/countup@1.8.2/dist/countUp.min.js"></script>
 <script>
-  window.addEventListener('load', () => {
-    const isInViewport = (element) => {
-      const rect = element.getBoundingClientRect();
-      return (
-        rect.top >= 0 &&
-        rect.left >= 0 &&
-        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-      );
-    };
+window.addEventListener('load', () => {
+  const handleIntersection = (entries, observer) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        const originalText = el.textContent;
+        const mainNumber = originalText.split(',')[0];
+        const endValue = parseInt(mainNumber.replace(/\./g, '').replace(/[^0-9-]/g, ''));
 
-    const handleIntersection = (entries, observer) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const el = entry.target;
-          const counter = new CountUp(el.id, 0, el.textContent, 0, 3); // el, startVal, endVal, decimalPlaces, duration
-          if (!counter.error) {
-            counter.start();
-            observer.unobserve(el);
-          } else console.error(counter.error);
-        }
-      });
-    };
+        const options = {
+          useEasing: true,
+          useGrouping: true, // This enables thousand separators
+          separator: '.', // Use dot as thousand separator
+          decimal: ',', // Use comma as decimal separator
+        };
 
-    const counters = document.querySelectorAll('.statistics .js--counter');
-    const observer = new IntersectionObserver(handleIntersection, { threshold: 0.5 });
-    counters.forEach((counter) => observer.observe(counter));
+        const counter = new CountUp(el.id, 0, endValue, 0, 3, options);
+
+        if (!counter.error) {
+          counter.start();
+          observer.unobserve(el);
+        } else console.error(counter.error);
+      }
+    });
+  };
+
+  const counters = document.querySelectorAll('.facts-item__statistic .h1-l strong');
+
+  counters.forEach((counter, index) => {
+    if (!counter.id) counter.id = `counter-${index}`;
   });
+
+  const observer = new IntersectionObserver(handleIntersection, {
+    threshold: 0.5,
+  });
+
+  counters.forEach((counter) => observer.observe(counter));
+});
+
 </script>
