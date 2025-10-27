@@ -1,0 +1,86 @@
+<script
+  async
+  src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.13.0/lottie.min.js"
+  onload="window.dispatchEvent(new Event('lottie-loaded'))"
+></script>
+
+<script>
+  const windowWidth = window.innerWidth;
+
+  const whenLottieReady = (callback) => {
+    if (typeof lottie !== 'undefined') callback();
+    else window.addEventListener('lottie-loaded', callback, { once: true });
+  };
+
+  // Function to load a single Lottie animation
+  const loadLottieAnimation = (element) => {
+    if (element.getAttribute('data-lottie-loaded')) return;
+    if (windowWidth < 768 && element.getAttribute('data-load-desktop-only') === 'true') return;
+
+    const lottiePath =
+      windowWidth < 768 && element.getAttribute('data-mobile-path') !== ''
+        ? element.getAttribute('data-mobile-path')
+        : element.getAttribute('data-lottie-path');
+    const lottieDuration = parseInt(element.getAttribute('data-lottie-duration')) || 4500;
+
+    const animation = lottie.loadAnimation({
+      container: element,
+      renderer: 'svg',
+      loop: true,
+      autoplay: true,
+      path: lottiePath,
+    });
+
+    animation.addEventListener('DOMLoaded', () => {
+      const animationDuration = (animation.totalFrames / animation.frameRate) * 1000;
+      const speed = animationDuration / lottieDuration;
+      animation.setSpeed(speed);
+      // console.log(`Lottie loaded: ${lottiePath} (speed: ${speed.toFixed(2)}x), mobile path: ${element.getAttribute('data-mobile-path')}`);
+    });
+
+    element.lottieInstance = animation;
+    element.setAttribute('data-lottie-loaded', 'true');
+  };
+
+  // Function to initialize Lottie animations
+  const initLottieAnimations = () => {
+    const lottieElements = document.querySelectorAll('.lottie-placeholder');
+    let hasInteracted = false;
+
+    const loadAllLotties = () => {
+      if (hasInteracted) return;
+      hasInteracted = true;
+
+      whenLottieReady(() => {
+        lottieElements.forEach((element) => {
+          const loadEager = element.getAttribute('data-load-eager') === 'true';
+          if (!loadEager) loadLottieAnimation(element);
+        });
+      });
+    };
+
+    // Load eager Lotties immediately
+    whenLottieReady(() => {
+      lottieElements.forEach((element) => {
+        const loadEager = element.getAttribute('data-load-eager') === 'true';
+        if (loadEager) loadLottieAnimation(element);
+      });
+    });
+
+    // Listen for any user interaction on the page
+    const interactionEvents = ['scroll', 'click', 'touchstart', 'mousemove', 'keydown'];
+    interactionEvents.forEach((event) => {
+      window.addEventListener(event, loadAllLotties, { once: true, passive: true });
+    });
+  };
+
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initLottieAnimations);
+  else initLottieAnimations();
+</script>
+<!--
+Example element:
+
+<div data-mobile-path="" data-lottie-path="" data-lottie-duration="6000" data-load-eager="false" data-load-desktop-only="false" class="lottie-placeholder" data-lottie-loaded="true"></div>
+
+-->
