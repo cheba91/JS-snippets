@@ -1,4 +1,4 @@
-
+// Horizontal scrolling
   window.addEventListener('load', () => {
     const section = document.querySelector('.scroll-section');
     const lastElement = document.querySelector('.card[scroll-element="last"]');
