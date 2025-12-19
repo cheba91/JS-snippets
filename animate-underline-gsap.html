@@ -1,0 +1,71 @@
+<style>
+  [animated-line] {
+  --underline-width: 0%;
+  background-image: linear-gradient(white, white);
+  background-repeat: no-repeat;
+  background-size: var(--underline-width) 4px;
+  background-position: left bottom;
+}
+
+</style>
+<script>
+  //---------------------- With media query
+  // document.addEventListener('DOMContentLoaded', () => {
+//   gsap.registerPlugin(ScrollTrigger);
+//   let mm = gsap.matchMedia();
+
+//   const animate = () => {
+//     const elements = document.querySelectorAll('[animated-line]');
+
+//     ScrollTrigger.batch(elements, {
+//       once: true,
+//       onEnter: (batch) => {
+//         batch.forEach((element, index) => {
+//           // Animate the CSS custom property that controls the underline width
+//           gsap.fromTo(
+//             element,
+//             {
+//               '--underline-width': '0%',
+//             },
+//             {
+//               '--underline-width': '100%',
+//               duration: 0.6,
+//               delay: 0.1 * index,
+//               ease: 'power2.out',
+//             }
+//           );
+//         });
+//       },
+//     });
+//   };
+
+//   mm.add('(min-width: 992px)', animate);
+// });
+document.addEventListener('DOMContentLoaded', () => {
+  gsap.registerPlugin(ScrollTrigger);
+
+  const elements = document.querySelectorAll('[animated-line]');
+
+  ScrollTrigger.batch(elements, {
+    once: true,
+    onEnter: (batch) => {
+      batch.forEach((element, index) => {
+        // Animate the CSS custom property that controls the underline width
+        gsap.fromTo(
+          element,
+          {
+            '--underline-width': '0%',
+          },
+          {
+            '--underline-width': '100%',
+            duration: 2.5,
+            delay: 0.1 * index,
+            ease: 'power2.out',
+          }
+        );
+      });
+    },
+  });
+});
+
+</script>
