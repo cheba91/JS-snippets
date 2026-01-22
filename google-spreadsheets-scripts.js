@@ -725,7 +725,9 @@ function replaceYouTubeEmbeds() {
   const values = range.getValues(); // Get values as a 2D array
 
   // Regex to capture the entire YouTube embed, including wrapping <p> tags
-  const youtubeRegex = /<p>\s*<iframe[^>]*?src="https:\/\/www\.youtube\.com\/embed\/([^"?]+)[^>]*?title="([^"]+)"[^>]*?><\/iframe>\s*<\/p>/;
+  // const youtubeRegex = /<p>\s*<iframe[^>]*?src="https:\/\/www\.youtube\.com\/embed\/([^"?]+)[^>]*?title="([^"]+)"[^>]*?><\/iframe>\s*<\/p>/;
+  // More flexible regex - <p> tags optional, title optional
+  const youtubeRegex = /(?:<p>\s*)?<iframe[^>]*?src="https:\/\/www\.youtube\.com\/embed\/([^"?]+)"[^>]*?(?:title="([^"]+)")?[^>]*?><\/iframe>(?:\s*<\/p>)?/g;
 
   let cellsUpdated = 0;
 
