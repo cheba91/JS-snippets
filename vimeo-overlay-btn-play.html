@@ -1,0 +1,48 @@
+<script src="https://player.vimeo.com/api/player.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const wrappers = document.querySelectorAll(".vimeo-video-wrapper");
+
+  wrappers.forEach(wrapper => {
+    const playBtn = wrapper.querySelector(".play-button");
+    const poster = wrapper.querySelector(".vimeo_poster");
+    const iframe = wrapper.querySelector("iframe");
+    const player = new Vimeo.Player(iframe);
+
+    playBtn.addEventListener("click", () => {
+      poster.style.display = "none";  
+      playBtn.style.display = "none";  
+      player.play(); 
+    });
+
+    player.on("pause", () => {
+      poster.style.display = "block";
+      playBtn.style.display = "block";
+    });
+
+    player.on("ended", () => {
+      poster.style.display = "block";
+      playBtn.style.display = "flex";
+    });
+
+    // STOP VIDEO WHEN POPUP CLOSES
+    const popup = wrapper.closest(".explainer_popup");
+    if (popup) {
+      // observe style changes
+      const observer = new MutationObserver(mutations => {
+        mutations.forEach(mutation => {
+          if (
+            mutation.attributeName === "style" &&
+            popup.style.display === "none"
+          ) {
+            player.pause();  // stops the video
+            poster.style.display = "block";
+            playBtn.style.display = "flex";
+          }
+        });
+      });
+      observer.observe(popup, { attributes: true });
+    }
+  });
+});
+</script>
