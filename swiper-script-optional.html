@@ -1,0 +1,176 @@
+<script>
+  var Webflow = Webflow || [];
+  Webflow.push(function () {
+    window.__swiperLoader = window.__swiperLoader || { promise: null };
+
+    function loadScriptOnce(src) {
+      if (window.Swiper) return Promise.resolve();
+      if (window.__swiperLoader.promise) return window.__swiperLoader.promise;
+
+      window.__swiperLoader.promise = new Promise((resolve, reject) => {
+        const existing = document.querySelector(`script[src="${src}"]`);
+        if (existing) {
+          if (window.Swiper) return resolve();
+          existing.addEventListener('load', resolve, { once: true });
+          existing.addEventListener('error', reject, { once: true });
+          return;
+        }
+
+        const s = document.createElement('script');
+        s.src = src;
+        s.async = true;
+        s.onload = resolve;
+        s.onerror = reject;
+        document.body.appendChild(s);
+      });
+
+      return window.__swiperLoader.promise;
+    }
+
+    function ensureSwiperClasses(container) {
+      if (!container.classList.contains('swiper')) container.classList.add('swiper');
+
+      const wrapper = container.querySelector('[data-swiper="swiper-wrapper"]');
+      if (wrapper && !wrapper.classList.contains('swiper-wrapper')) wrapper.classList.add('swiper-wrapper');
+
+      container.querySelectorAll('[data-swiper="swiper-slide"]').forEach((slide) => {
+        if (!slide.classList.contains('swiper-slide')) slide.classList.add('swiper-slide');
+      });
+
+      return !!wrapper;
+    }
+
+    function initWhenReady() {
+      if (!document.querySelector('[data-swiper="swiper"]')) return;
+
+      loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/Swiper/8.4.7/swiper-bundle.min.js').then(() => {
+        if (!window.Swiper) return;
+
+        let swiperInstances = new Map();
+
+        function getBreakpoints(container) {
+          const breakpoints = {};
+          let lastSpaceBetween;
+
+          container.getAttributeNames().forEach((attr) => {
+            const match = attr.match(/data-slides-(\d+)/);
+            if (match) {
+              const bp = parseInt(match[1], 10);
+              breakpoints[bp] = breakpoints[bp] || {};
+              const v = container.getAttribute(attr);
+              breakpoints[bp].slidesPerView = v === 'auto' ? 'auto' : parseFloat(v);
+            }
+
+            const spaceMatch = attr.match(/data-space-(\d+)/);
+            if (spaceMatch) {
+              const bp = parseInt(spaceMatch[1], 10);
+              breakpoints[bp] = breakpoints[bp] || {};
+              lastSpaceBetween = parseInt(container.getAttribute(attr), 10);
+              breakpoints[bp].spaceBetween = lastSpaceBetween;
+            }
+
+            const centeredMatch = attr.match(/data-centered-(\d+)/);
+            if (centeredMatch) {
+              const bp = parseInt(centeredMatch[1], 10);
+              breakpoints[bp] = breakpoints[bp] || {};
+              breakpoints[bp].centeredSlides = container.getAttribute(attr) === 'true';
+            }
+          });
+
+          Object.keys(breakpoints).forEach((bp) => {
+            if (!('spaceBetween' in breakpoints[bp]) && lastSpaceBetween !== undefined) {
+              breakpoints[bp].spaceBetween = lastSpaceBetween;
+            }
+          });
+
+          return breakpoints;
+        }
+
+        function initSwiper(container) {
+          if (swiperInstances.has(container)) return;
+
+          if (!ensureSwiperClasses(container)) return;
+
+          const slidesPerViewAttr = container.getAttribute('data-slides-per-view');
+          const slidesPerView = slidesPerViewAttr === 'auto' ? 'auto' : parseFloat(slidesPerViewAttr) || 1;
+
+          const spaceBetween = parseInt(container.getAttribute('data-space-between'), 10) || 0;
+          const initialSlide = parseInt(container.getAttribute('data-initial-slide'), 10) || 0;
+          const breakpoints = getBreakpoints(container);
+          const autoplayDelay = parseInt(container.getAttribute('data-autoplay'), 10);
+          const autoplayDisableOnInteraction = container.getAttribute('data-autoplay-disable-on-interaction') === 'true';
+          const autoplayPauseOnHover = container.getAttribute('data-autoplay-pause-on-hover') === 'true';
+          const loop = container.getAttribute('data-loop') === 'true';
+          const centeredSlides = container.getAttribute('data-centered-slides') === 'true';
+
+          const options = {
+            slidesPerView,
+            spaceBetween,
+            initialSlide,
+            breakpoints,
+            centeredSlides,
+            pagination: {
+              el: container.parentElement.querySelector('[data-swiper-pagination-bullets]'),
+              clickable: true,
+            },
+            navigation: {
+              nextEl: container.parentElement.querySelector("[data-swiper-arrow='next']"),
+              prevEl: container.parentElement.querySelector("[data-swiper-arrow='prev']"),
+            },
+            scrollbar: {
+              el: container.parentElement.querySelector('.swiper-scrollbar'),
+              draggable: true,
+            },
+            autoplay: autoplayDelay
+              ? {
+                  delay: autoplayDelay,
+                  disableOnInteraction: autoplayDisableOnInteraction,
+                  pauseOnMouseEnter: autoplayPauseOnHover,
+                }
+              : false,
+            loop,
+          };
+
+          const swiper = new Swiper(container, options);
+          swiperInstances.set(container, swiper);
+        }
+
+        function destroySwiper(container) {
+          const inst = swiperInstances.get(container);
+          if (inst) {
+            inst.destroy(true, true);
+            swiperInstances.delete(container);
+          }
+        }
+
+        function handleSwipers() {
+          const isMobile = window.innerWidth < 767;
+
+          document.querySelectorAll('[data-swiper="swiper"]').forEach((container) => {
+            const onlyMobile = container.getAttribute('data-only-mobile') === 'true';
+            const disableMobile = container.getAttribute('data-disable-mobile') === 'true';
+
+            if (disableMobile && isMobile) return destroySwiper(container);
+
+            if (onlyMobile) {
+              if (isMobile) initSwiper(container);
+              else destroySwiper(container);
+            } else {
+              initSwiper(container);
+            }
+          });
+        }
+
+        if (window.__swiperResizeHandler) {
+          window.removeEventListener('resize', window.__swiperResizeHandler);
+        }
+        window.__swiperResizeHandler = handleSwipers;
+
+        handleSwipers();
+        window.addEventListener('resize', window.__swiperResizeHandler);
+      });
+    }
+
+    initWhenReady();
+  });
+</script>
