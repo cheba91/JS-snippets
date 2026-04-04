@@ -174,3 +174,22 @@
     initWhenReady();
   });
 </script>
+<script>
+  // Load swiper IF it's not loaded yet
+  (() => {
+    const CDN = 'https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.0.5/swiper-bundle';
+    const loadSwiper = (tag, key, src) => {
+      if (tag === 'script' && typeof Swiper !== 'undefined') return;
+      if (document.querySelector(`${tag}[${key}="${src}"]`)) return;
+      const el = Object.assign(document.createElement(tag), {
+        [key]: src,
+        ...(tag === 'link' ? { rel: 'stylesheet' } : { async: true }),
+      });
+      console.log(`Loading ${tag} from ${src}`);
+      document.head.appendChild(el);
+    };
+
+    loadSwiper('link', 'href', `${CDN}.css`);
+    loadSwiper('script', 'src', `${CDN}.min.js`);
+  })();
+</script>
