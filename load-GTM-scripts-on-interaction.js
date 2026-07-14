@@ -107,3 +107,23 @@
   lazyLoadScriptsOnView('#selector', ['script-url-1', 'script-url-2'], () => {
     console.log('All scripts loaded — now run your init code here');
   });
+
+
+//------------ Just interaction event ------------//
+const INTERACTION_EVENTS = ['click', 'touchstart', 'keydown', 'mousemove', 'wheel', 'scroll', 'resize'];
+const TIMEOUT_MS = 1500;
+
+const controller = new AbortController();
+
+function fire() {
+  controller.abort(); // removes all listeners at once
+  window.dispatchEvent(new Event('firstUserInteraction'));
+}
+
+for (const type of INTERACTION_EVENTS) {
+  const target = type === 'resize' ? window : document;
+  target.addEventListener(type, fire, { once: true, signal: controller.signal, passive: true });
+}
+
+setTimeout(fire, TIMEOUT_MS);
+
